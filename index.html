@@ -4,178 +4,397 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ludo King Pro - 4 Player Edition</title>
+    <audio id="diceSound"
+src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+<audio id="moveSound"
+src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
     <style>
-        :root {
-            --red: #ea4335;
-            --green: #34a853;
-            --yellow: #fbbc05;
-            --blue: #4285f4;
-            --bg: #1e1e24;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: #ffffff;
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        h1 {
-            font-size: 22px;
-            margin: 5px 0;
-            color: #f1c40f;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        #online-panel {
-            background: #2c2c35;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            width: 100%;
-            max-width: 380px;
-            box-sizing: border-box;
-            font-size: 13px;
-        }
-        .row { display: flex; gap: 5px; margin-top: 5px; }
-        input {
-            flex: 1;
-            padding: 6px;
-            border-radius: 4px;
-            border: none;
-            background: #444;
-            color: #fff;
-        }
-        .btn-sm {
-            padding: 6px 12px;
-            background: var(--blue);
-            border: none;
-            color: white;
-            border-radius: 4px;
-            font-weight: bold;
-        }
+        :root{
+    --red:#ff4d4d;
+    --green:#32d74b;
+    --yellow:#ffd60a;
+    --blue:#0a84ff;
 
-        #status {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
+    --dark:#111827;
+    --card:#1f2937;
+    --glass:rgba(255,255,255,0.08);
+}
 
-        /* Papan Ludo Klasik 15x15 Grid */
-        #ludo-board {
-            display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-            width: 100%;
-            max-width: 380px;
-            aspect-ratio: 1;
-            background-color: #fff;
-            border: 4px solid #333;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            position: relative;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .cell {
-            border: 0.5px solid #ddd;
-            box-sizing: border-box;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:
+    radial-gradient(circle at top,#243b55,#0f172a 70%);
+    min-height:100vh;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:14px;
+    overflow-x:hidden;
+}
 
-        /* Mewarnai Base Rumah 4 Warna */
-        .base-red { grid-column: span 6; grid-row: span 6; background-color: var(--red); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
-        .base-green { grid-column: 10 / span 6; grid-row: span 6; background-color: var(--green); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
-        .base-yellow { grid-column: 10 / span 6; grid-row: 10 / span 6; background-color: var(--yellow); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
-        .base-blue { grid-column: span 6; grid-row: 10 / span 6; background-color: var(--blue); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
-        
-        .inner-box { background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;}
+/* ===== TITLE ===== */
 
-        /* Segitiga Tengah / Finish Area */
-        .center-home {
-            grid-column: 7 / span 3;
-            grid-row: 7 / span 3;
-            background: #fff;
-            position: relative;
-        }
-        .center-tri {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-        .tri-red { background: var(--red); clip-path: polygon(0% 0%, 50% 50%, 0% 100%); }
-        .tri-green { background: var(--green); clip-path: polygon(0% 0%, 100% 0%, 50% 50%); }
-        .tri-yellow { background: var(--yellow); clip-path: polygon(100% 0%, 100% 100%, 50% 50%); }
-        .tri-blue { background: var(--blue); clip-path: polygon(0% 100%, 100% 100%, 50% 50%); }
+h1{
+    margin-top:5px;
+    font-size:28px;
+    font-weight:800;
+    background:linear-gradient(45deg,#ffd60a,#ff9f0a);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 20px rgba(255,214,10,.5);
+    margin-bottom:12px;
+}
 
-        /* Jalur Spesifik Warna */
-        .bg-red { background-color: var(--red) !important; }
-        .bg-green { background-color: var(--green) !important; }
-        .bg-yellow { background-color: var(--yellow) !important; }
-        .bg-blue { background-color: var(--blue) !important; }
-        .star-cell { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23777"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>'); background-size: 80%; background-repeat: no-repeat; background-position: center;}
+/* ===== PANEL ===== */
 
-        /* Bidak (Tokens) */
-        .pawn {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.4);
-            z-index: 10;
-            transition: transform 0.2s ease;
-            display: inline-block;
-        }
-        .pawn.can-move {
-            animation: bounce 0.4s infinite alternate;
-            border-color: #f1c40f;
-            cursor: pointer;
-        }
-        @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.3); } }
+#online-panel{
+    width:100%;
+    max-width:390px;
+    background:var(--glass);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:22px;
+    padding:14px;
+    margin-bottom:14px;
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.1);
+}
 
-        /* Kontrol Dadu */
-        #control-area {
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .dice-box {
-            width: 55px;
-            height: 55px;
-            background: white;
-            border-radius: 12px;
-            border: 3px solid #444;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-        }
-        .dice-active { border-color: var(--yellow); animation: shake 0.1s infinite; }
-        @keyframes shake { 0% {transform: translate(2px, 1px) rotate(0deg);} 50% {transform: translate(-1px, -1px) rotate(3deg);} 100% {transform: translate(1px, 2px) rotate(-3deg);} }
-        
-        .btn-roll {
-            padding: 12px 28px;
-            font-size: 16px;
-            font-weight: bold;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.4);
-        }
-        .btn-roll:disabled { background: #555; box-shadow: none; }
+.row{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
+}
+
+input{
+    flex:1;
+    background:#111827;
+    border:none;
+    border-radius:14px;
+    padding:12px;
+    color:white;
+    outline:none;
+    font-size:14px;
+}
+
+input::placeholder{
+    color:#94a3b8;
+}
+
+.btn-sm{
+    border:none;
+    border-radius:14px;
+    padding:12px 16px;
+    font-weight:700;
+    color:white;
+    cursor:pointer;
+    transition:.2s;
+    background:linear-gradient(45deg,#0a84ff,#5ac8fa);
+}
+
+.btn-sm:hover{
+    transform:scale(1.05);
+}
+
+/* ===== STATUS ===== */
+
+#status{
+    margin-bottom:14px;
+    background:rgba(255,255,255,.08);
+    padding:12px 20px;
+    border-radius:999px;
+    font-weight:700;
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+}
+
+/* ===== BOARD ===== */
+
+#ludo-board{
+    width:100%;
+    max-width:390px;
+    aspect-ratio:1;
+    display:grid;
+    grid-template-columns:repeat(15,1fr);
+    grid-template-rows:repeat(15,1fr);
+
+    background:#f8fafc;
+    border-radius:28px;
+    overflow:hidden;
+
+    border:6px solid rgba(255,255,255,.08);
+
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.45),
+    inset 0 0 25px rgba(255,255,255,.2);
+}
+
+/* ===== CELLS ===== */
+
+.cell{
+    border:.5px solid rgba(0,0,0,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
+
+.cell::after{
+    content:'';
+    position:absolute;
+    inset:2px;
+    border-radius:4px;
+}
+
+/* ===== BASE ===== */
+
+.base-red,
+.base-green,
+.base-blue,
+.base-yellow{
+    padding:12px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    position:relative;
+}
+
+.base-red{
+    background:linear-gradient(145deg,#ff6b6b,var(--red));
+}
+.base-green{
+    background:linear-gradient(145deg,#4ade80,var(--green));
+}
+.base-yellow{
+    background:linear-gradient(145deg,#ffe066,var(--yellow));
+}
+.base-blue{
+    background:linear-gradient(145deg,#4dabf7,var(--blue));
+}
+
+.inner-box{
+    background:white;
+    border-radius:22px;
+    box-shadow:
+    inset 0 3px 8px rgba(0,0,0,.2),
+    0 4px 8px rgba(0,0,0,.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* ===== CENTER ===== */
+
+.center-home{
+    grid-column:7/span 3;
+    grid-row:7/span 3;
+    position:relative;
+    overflow:hidden;
+}
+
+.center-tri{
+    position:absolute;
+    width:100%;
+    height:100%;
+}
+
+.tri-red{
+    background:var(--red);
+    clip-path:polygon(0 0,50% 50%,0 100%);
+}
+
+.tri-green{
+    background:var(--green);
+    clip-path:polygon(0 0,100% 0,50% 50%);
+}
+
+.tri-yellow{
+    background:var(--yellow);
+    clip-path:polygon(100% 0,100% 100%,50% 50%);
+}
+
+.tri-blue{
+    background:var(--blue);
+    clip-path:polygon(0 100%,100% 100%,50% 50%);
+}
+
+/* ===== PATH COLORS ===== */
+
+.bg-red{
+    background:#ffccd5 !important;
+}
+
+.bg-green{
+    background:#d8f3dc !important;
+}
+
+.bg-yellow{
+    background:#fff3bf !important;
+}
+
+.bg-blue{
+    background:#d0ebff !important;
+}
+
+/* ===== PAWN ===== */
+
+.pawn{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    z-index:10;
+    border:2px solid white;
+
+    box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.6),
+    0 5px 10px rgba(0,0,0,.35);
+    transition:
+transform .25s ease,
+left .25s ease,
+top .25s ease;
+    transition:.25s;
+    animation:spawn .3s ease;
+}
+
+@keyframes spawn{
+    from{
+        transform:scale(0);
+    }
+    to{
+        transform:scale(1);
+    }
+}
+
+.pawn:hover{
+    transform:scale(1.15);
+}
+
+.pawn.can-move{
+    animation:pulse .6s infinite alternate;
+    cursor:pointer;
+}
+
+@keyframes pulse{
+    from{
+        transform:scale(1);
+        box-shadow:0 0 0 rgba(255,255,255,0);
+    }
+    to{
+        transform:scale(1.25);
+        box-shadow:0 0 18px rgba(255,255,255,.9);
+    }
+}
+
+/* ===== DICE ===== */
+
+#control-area{
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.dice-box{
+    width:72px;
+    height:72px;
+
+    border-radius:22px;
+
+    background:
+    linear-gradient(145deg,#ffffff,#dbeafe);
+
+    color:#111827;
+
+    font-size:34px;
+    font-weight:900;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.35),
+    inset 0 3px 8px rgba(255,255,255,.7);
+
+    transition:.2s;
+}
+
+.dice-active{
+    animation:shake .08s infinite;
+}
+
+@keyframes shake{
+    0%{transform:rotate(2deg)}
+    50%{transform:rotate(-2deg)}
+    100%{transform:rotate(2deg)}
+}
+
+/* ===== BUTTON ===== */
+
+.btn-roll{
+    border:none;
+    border-radius:999px;
+    padding:16px 28px;
+    font-size:16px;
+    font-weight:800;
+    color:white;
+
+    background:
+    linear-gradient(45deg,#22c55e,#16a34a);
+
+    box-shadow:
+    0 10px 20px rgba(34,197,94,.35);
+
+    transition:.2s;
+}
+
+.btn-roll:hover{
+    transform:translateY(-2px) scale(1.03);
+}
+
+.btn-roll:disabled{
+    opacity:.45;
+    transform:none;
+    box-shadow:none;
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:480px){
+
+    h1{
+        font-size:24px;
+    }
+
+    #ludo-board{
+        border-radius:22px;
+    }
+
+    .pawn{
+        width:15px;
+        height:15px;
+    }
+
+    .dice-box{
+        width:62px;
+        height:62px;
+        font-size:28px;
+    }
+
+    .btn-roll{
+        padding:14px 22px;
+        font-size:15px;
+    }
+}
     </style>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 </head>
@@ -318,7 +537,7 @@
 
                     if (container) {
                         let pawn = document.createElement('div');
-                        pawn.className = `pawn bg-${color}`;
+                        pawn.className = `pawn`; pawn.style.background = ` radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), var(--${color}) )`;
                         pawn.dataset.color = color;
                         pawn.dataset.idx = idx;
                         
@@ -350,7 +569,7 @@
             let diceEl = document.getElementById('dice-view');
             diceEl.classList.add('dice-active');
             document.getElementById('roll-btn').disabled = true;
-
+            document.getElementById('diceSound').play();
             let shakeInterval = setInterval(() => {
                 diceEl.innerText = Math.floor(Math.random() * 6) + 1;
             }, 80); 
@@ -391,7 +610,7 @@
 
         function eksekusiJalan(color, pawnIdx) {
             let currentPos = positions[color][pawnIdx];
-            
+            document.getElementById('moveSound').play();
             if (currentPos === 'H' && currentRoll === 6) {
                 positions[color][pawnIdx] = startIndexes[color];
             } else {
