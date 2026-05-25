@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ludo King Pro - Online Mobile Edition</title>
+    <title>Ludo King Pro - 4 Player Edition</title>
     <style>
         :root {
             --red: #ea4335;
@@ -31,14 +31,13 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
-        /* Menu Koneksi Online */
         #online-panel {
             background: #2c2c35;
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             box-sizing: border-box;
             font-size: 13px;
         }
@@ -92,11 +91,11 @@
             justify-content: center;
         }
 
-        /* Mewarnai Base Rumah */
-        .base-red { grid-column: span 6; grid-row: span 6; background-color: var(--red); display: grid; grid-template-columns: repeat(2,1fr); padding: 15px; gap: 15px;}
-        .base-green { grid-column: 10 / span 6; grid-row: span 6; background-color: var(--green); display: grid; grid-template-columns: repeat(2,1fr); padding: 15px; gap: 15px;}
-        .base-yellow { grid-column: 10 / span 6; grid-row: 10 / span 6; background-color: var(--yellow); display: grid; grid-template-columns: repeat(2,1fr); padding: 15px; gap: 15px;}
-        .base-blue { grid-column: span 6; grid-row: 10 / span 6; background-color: var(--blue); display: grid; grid-template-columns: repeat(2,1fr); padding: 15px; gap: 15px;}
+        /* Mewarnai Base Rumah 4 Warna */
+        .base-red { grid-column: span 6; grid-row: span 6; background-color: var(--red); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
+        .base-green { grid-column: 10 / span 6; grid-row: span 6; background-color: var(--green); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
+        .base-yellow { grid-column: 10 / span 6; grid-row: 10 / span 6; background-color: var(--yellow); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
+        .base-blue { grid-column: span 6; grid-row: 10 / span 6; background-color: var(--blue); display: grid; grid-template-columns: repeat(2,1fr); padding: 12px; gap: 12px;}
         
         .inner-box { background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;}
 
@@ -106,7 +105,6 @@
             grid-row: 7 / span 3;
             background: #fff;
             position: relative;
-            clip-path: polygon(0% 0%, 100% 0%, 50% 50%, 100% 100%, 0% 100%);
         }
         .center-tri {
             position: absolute;
@@ -127,8 +125,8 @@
 
         /* Bidak (Tokens) */
         .pawn {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             border: 2px solid #fff;
             box-shadow: 0 3px 5px rgba(0,0,0,0.4);
@@ -141,9 +139,9 @@
             border-color: #f1c40f;
             cursor: pointer;
         }
-        @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.25); } }
+        @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.3); } }
 
-        /* Kontrol Dadu Moderen */
+        /* Kontrol Dadu */
         #control-area {
             margin-top: 15px;
             display: flex;
@@ -163,10 +161,9 @@
             font-weight: bold;
             color: #333;
             box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-            transition: transform 0.1s ease;
         }
-        .dice-active { border-color: var(--yellow); animation: shake 0.2s infinite; }
-        @keyframes shake { 0% {transform: rotate(0);} 50% {transform: rotate(10deg);} 100% {transform: rotate(-10deg);} }
+        .dice-active { border-color: var(--yellow); animation: shake 0.1s infinite; }
+        @keyframes shake { 0% {transform: translate(2px, 1px) rotate(0deg);} 50% {transform: translate(-1px, -1px) rotate(3deg);} 100% {transform: translate(1px, 2px) rotate(-3deg);} }
         
         .btn-roll {
             padding: 12px 28px;
@@ -180,16 +177,14 @@
         }
         .btn-roll:disabled { background: #555; box-shadow: none; }
     </style>
-    <!-- Import PeerJS untuk sistem Online Multiplayer P2P tanpa server -->
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 </head>
 <body>
 
     <h1>Ludo King Pro 🎲</h1>
 
-    <!-- Panel Online Multi-player -->
     <div id="online-panel">
-        <div><strong>Status Koneksi:</strong> <span id="peer-status">Menghubungkan ke server P2P...</span></div>
+        <div><strong>Status:</strong> <span id="peer-status">Menghubungkan P2P... (Bisa dimainkan offline langsung)</span></div>
         <div class="row">
             <input type="text" id="my-id" readonly placeholder="ID Kamu">
             <button class="btn-sm" onclick="salinID()">Salin ID</button>
@@ -200,22 +195,28 @@
         </div>
     </div>
 
-    <div id="status">Menunggu Pemain...</div>
+    <div id="status">Menginisialisasi papan...</div>
 
-    <!-- Papan Ludo 15x15 -->
     <div id="ludo-board">
-        <!-- Rumah-Rumah Utama -->
         <div class="base-red" id="base-red">
             <div class="inner-box" id="r-home-0"></div><div class="inner-box" id="r-home-1"></div>
             <div class="inner-box" id="r-home-2"></div><div class="inner-box" id="r-home-3"></div>
         </div>
-        <div class="cell bg-green" id="c-0-6"></div><div class="cell bg-green star-cell" id="c-0-7"></div><div class="cell" id="c-0-8"></div>
+        
         <div class="base-green" id="base-green">
             <div class="inner-box" id="g-home-0"></div><div class="inner-box" id="g-home-1"></div>
             <div class="inner-box" id="g-home-2"></div><div class="inner-box" id="g-home-3"></div>
         </div>
 
-        <!-- Baris Jalur Atas & Bawah di-generate dinamis lewat JS agar file tidak kepanjangan -->
+        <div class="base-blue" id="base-blue">
+            <div class="inner-box" id="b-home-0"></div><div class="inner-box" id="b-home-1"></div>
+            <div class="inner-box" id="b-home-2"></div><div class="inner-box" id="b-home-3"></div>
+        </div>
+
+        <div class="base-yellow" id="base-yellow">
+            <div class="inner-box" id="y-home-0"></div><div class="inner-box" id="y-home-1"></div>
+            <div class="inner-box" id="y-home-2"></div><div class="inner-box" id="y-home-3"></div>
+        </div>
     </div>
 
     <div id="control-area">
@@ -224,8 +225,7 @@
     </div>
 
     <script>
-        // --- 1. RANCANGAN JALUR UTAMA LUDO (52 Kotak Keliling) ---
-        // Format koordinat: "baris-kolom" dari grid 15x15
+        // Jalur koordinat utama Ludo melingkar 52 kotak
         const mainTrack = [
             "6-1","6-2","6-3","6-4","6-5",
             "5-6","4-6","3-6","2-6","1-6","0-6","0-7","0-8","1-8","2-8","3-8","4-8","5-8",
@@ -234,7 +234,7 @@
             "8-5","8-4","8-3","8-2","8-1","8-0","7-0","6-0"
         ];
 
-        // Jalur khusus menuju garis finish masing-masing warna
+        // Jalur finish masing-masing warna
         const homeTracks = {
             red: ["7-1","7-2","7-3","7-4","7-5","7-6"],
             green: ["1-7","2-7","3-7","4-7","5-7","6-7"],
@@ -244,15 +244,12 @@
 
         const startIndexes = { red: 0, green: 13, yellow: 26, blue: 39 };
 
-        // --- 2. STATE GAME ---
         let players = ['red', 'green', 'yellow', 'blue'];
         let turnIndex = 0; 
         let currentRoll = 0;
-        let myColor = 'red'; // Default jika main sendiri / Host
+        let myColor = 'red'; 
         let isOnline = false;
 
-        // Posisi semua 4 bidak untuk masing-masing warna
-        // H = Di dalam Rumah (Home Base), nomor 0-51 = indeks di mainTrack, F = Finish
         let positions = {
             red: ['H','H','H','H'],
             green: ['H','H','H','H'],
@@ -260,19 +257,17 @@
             blue: ['H','H','H','H']
         };
 
-        // --- 3. GENERATE SISA KOTAK PAPAN DI HTML ---
         const boardEl = document.getElementById('ludo-board');
+        
         function buildBoardCells() {
-            // Render grid kosong di area jalur agar CSS grid 15x15 konsisten
             for (let r = 0; r < 15; r++) {
                 for (let c = 0; c < 15; c++) {
-                    // Skip area yang sudah dipakai Rumah Besar dan Segitiga Tengah
                     if(r<6 && c<6) continue;
                     if(r<6 && c>8) continue;
                     if(r>8 && c<6) continue;
                     if(r>8 && c>8) continue;
                     if(r>=6 && r<=8 && c>=6 && c<=8) {
-                        if(r==6 && c==6) { // Taruh segitiga center sekaligus
+                        if(r==6 && c==6) {
                             let center = document.createElement('div');
                             center.className = 'center-home';
                             center.innerHTML = '<div class="center-tri tri-red"></div><div class="center-tri tri-green"></div><div class="center-tri tri-yellow"></div><div class="center-tri tri-blue"></div>';
@@ -281,19 +276,16 @@
                         continue;
                     }
 
-                    // Buat Kotak Biasa
                     let cell = document.createElement('div');
                     cell.className = 'cell';
                     cell.id = `c-${r}-${c}`;
 
-                    // Warnai jalur khusus
                     let coord = `${r}-${c}`;
                     if(homeTracks.red.includes(coord)) cell.classList.add('bg-red');
                     if(homeTracks.green.includes(coord)) cell.classList.add('bg-green');
                     if(homeTracks.yellow.includes(coord)) cell.classList.add('bg-yellow');
                     if(homeTracks.blue.includes(coord)) cell.classList.add('bg-blue');
                     
-                    // Kotak Start awal Bidak keluar rumah
                     if(coord === "6-1") cell.classList.add('bg-red', 'star-cell');
                     if(coord === "1-8") cell.classList.add('bg-green', 'star-cell');
                     if(coord === "8-13") cell.classList.add('bg-yellow', 'star-cell');
@@ -305,23 +297,19 @@
         }
         buildBoardCells();
 
-        // --- 4. LOGIKA UTAMA PERMAINAN ---
         function updateUI() {
-            // Bersihkan semua bidak lama di papan
             document.querySelectorAll('.pawn').forEach(p => p.remove());
 
-            // Render ulang semua posisi bidak
             players.forEach(color => {
                 positions[color].forEach((pos, idx) => {
                     let container;
                     if (pos === 'H') {
-                        container = document.getElementById(`${color[0]}-home-${idx}`);
+                        container = document.getElementById(`${color}-home-${idx}`);
                     } else if (pos.toString().startsWith('Home-')) {
-                        let homeIdx = parseInt(pos.split('-')[1]);
+                        let homeIdx = parseInt(pos.split('-'));
                         let coord = homeTracks[color][homeIdx];
                         container = document.getElementById(`c-${coord}`);
                     } else if (pos === 'F') {
-                        // Sampai finish
                         return; 
                     } else {
                         let coord = mainTrack[pos];
@@ -334,7 +322,7 @@
                         pawn.dataset.color = color;
                         pawn.dataset.idx = idx;
                         
-                        // Cek apakah bidak ini bisa digerakkan
+                        // VALIDASI KRUSIAL: Hanya izinkan warna yang memiliki giliran aktif saat ini yang bisa melangkah
                         if (color === players[turnIndex] && (!isOnline || color === myColor) && currentRoll > 0) {
                             if (bisaJalan(color, pos, currentRoll)) {
                                 pawn.classList.add('can-move');
@@ -346,12 +334,10 @@
                 });
             });
 
-            // Tampilkan status giliran
             let activeColor = players[turnIndex];
             let statusEl = document.getElementById('status');
             statusEl.innerHTML = `Giliran: <span style="color:var(--${activeColor})">${activeColor.toUpperCase()}</span>`;
             
-            // Atur tombol dadu aktif/tidak
             let rollBtn = document.getElementById('roll-btn');
             if (activeColor === myColor || !isOnline) {
                 rollBtn.disabled = currentRoll !== 0;
@@ -365,17 +351,18 @@
             diceEl.classList.add('dice-active');
             document.getElementById('roll-btn').disabled = true;
 
+            let shakeInterval = setInterval(() => {
+                diceEl.innerText = Math.floor(Math.random() * 6) + 1;
+            }, 80); 
+
             setTimeout(() => {
                 clearInterval(shakeInterval);
                 currentRoll = Math.floor(Math.random() * 6) + 1;
-                // BONUS: Jika mau testing mudah keluarkan angka 6 melulu, ganti baris atas jadi: currentRoll = 6;
                 diceEl.innerText = currentRoll;
                 diceEl.classList.remove('dice-active');
 
-                // Kirim data dadu jika mode online
                 kirimDataRealtime({ type: 'ROLL', roll: currentRoll });
 
-                // Cek apakah ada langkah valid. Jika tidak ada, otomatis oper giliran
                 let color = players[turnIndex];
                 let adaLangkah = positions[color].some(pos => bisaJalan(color, pos, currentRoll));
 
@@ -383,24 +370,20 @@
                     setTimeout(() => {
                         currentRoll = 0;
                         operGiliran();
-                    }, 1000);
+                    }, 1200);
                 } else {
-                    updateUI(); // Nyalakan animasi loncat pada bidak yang bisa gerak
+                    updateUI(); 
                 }
             }, 600);
-
-            let shakeInterval = setInterval(() => {
-                diceEl.innerText = Math.floor(Math.random() * 6) + 1;
-            }, 80006); 
         }
 
         function bisaJalan(color, pos, roll) {
-            if (pos === 'H' && roll === 6) return true; // Angka 6 untuk keluar rumah
+            if (pos === 'H' && roll === 6) return true; 
             if (pos === 'H' && roll !== 6) return false;
             if (pos === 'F') return false;
             
             if (pos.toString().startsWith('Home-')) {
-                let curHomeIdx = parseInt(pos.split('-')[1]);
+                let curHomeIdx = parseInt(pos.split('-'));
                 return (curHomeIdx + roll) <= 5;
             }
             return true;
@@ -413,17 +396,14 @@
                 positions[color][pawnIdx] = startIndexes[color];
             } else {
                 let langkahSisa = currentRoll;
-                let targetPos = currentPos;
 
-                if (targetPos.toString().startsWith('Home-')) {
-                    let subIdx = parseInt(targetPos.split('-')[1]);
+                if (currentPos.toString().startsWith('Home-')) {
+                    let subIdx = parseInt(currentPos.split('-'));
                     positions[color][pawnIdx] = `Home-${subIdx + langkahSisa}`;
                 } else {
-                    // Berjalan di jalur keliling umum
                     let targetIdx = currentPos + langkahSisa;
-                    let batasFinish = (startIndexes[color] - 1 + 52) % 52; // 1 kotak sebelum belok rumah
+                    let batasFinish = (startIndexes[color] - 1 + 52) % 52; 
 
-                    // Hitung apakah harus berbelok masuk ke jalur rumah (*home track*)
                     let passedTurn = false;
                     for (let i = 1; i <= langkahSisa; i++) {
                         let checkPos = (currentPos + i) % 52;
@@ -442,22 +422,18 @@
                 }
             }
 
-            // Cek jika mendarat di kotak finish akhir
             if (positions[color][pawnIdx] === 'Home-5') {
                 positions[color][pawnIdx] = 'F';
-                alert(`Hore! Bidak ${color} berhasil finish! 🎉`);
+                alert(`Hore! Bidak ${color.toUpperCase()} berhasil finish! 🎉`);
             }
 
-            // SISTEM TENDANG BIDAK MUSUH
             efekMakanMengebom(color, positions[color][pawnIdx]);
 
-            // Bersihkan dadu
             currentRoll = 0;
             document.getElementById('dice-view').innerText = '-';
 
             kirimDataRealtime({ type: 'MOVE', positions: positions });
 
-            // Cek Menang Mutlak (Semua 4 bidak finish)
             if (positions[color].every(p => p === 'F')) {
                 alert(`Selamat! Pemain ${color.toUpperCase()} MENANG BESAR!`);
                 return;
@@ -467,13 +443,13 @@
         }
 
         function efekMakanMengebom(myColor, myPos) {
-            if(typeof myPos === 'string') return; // Aman dari base/jalur rumah aman
+            if(typeof myPos === 'string') return; 
 
             players.forEach(enemyColor => {
                 if(enemyColor === myColor) return;
                 positions[enemyColor].forEach((enemyPos, idx) => {
                     if (enemyPos === myPos) {
-                        positions[enemyColor][idx] = 'H'; // Tendang balik ke rumah!
+                        positions[enemyColor][idx] = 'H'; 
                         alert(`BOOM! Warna ${myColor.toUpperCase()} menendang Bidak ${enemyColor.toUpperCase()} kembali ke rumah!`);
                     }
                 });
@@ -485,43 +461,41 @@
             updateUI();
         }
 
-        // --- 5. LOGIKA REALTIME ONLINE MULTIPLAYER (PEERJS) ---
+        // --- PEERJS MULTIPLAYER LOGIC ---
         let peer;
         let conn;
 
         function initPeer() {
-            // Generate ID acak sederhana
             let randomId = 'ludo-' + Math.floor(1000 + Math.random() * 9000);
             peer = new Peer(randomId);
 
             peer.on('open', (id) => {
                 document.getElementById('my-id').value = id;
-                document.getElementById('peer-status').innerText = "Siap! Berikan ID ini ke temanmu atau masukkan ID teman.";
+                document.getElementById('peer-status').innerText = "Siap bermain offline / bagikan ID untuk online.";
             });
 
-            // Bertindak sebagai HOST menerima koneksi masuk
             peer.on('connection', (connection) => {
                 conn = connection;
                 setupConnectionObject();
-                myColor = 'red'; // Host otomatis jadi Merah
+                myColor = 'red'; 
                 isOnline = true;
-                alert("Temanmu sudah masuk ke arena! Kamu sebagai Merah, Teman sebagai Hijau.");
+                alert("Pemain kedua masuk! Anda: RED, Teman: GREEN.");
             });
         }
 
         function connectToPeer() {
             let targetId = document.getElementById('room-id').value;
-            if(!targetId) return alert("Masukkan ID target dulu!");
+            if(!targetId) return alert("Masukkan ID tujuan terlebih dahulu!");
 
             conn = peer.connect(targetId);
             setupConnectionObject();
-            myColor = 'green'; // Yang numpang join otomatis jadi Hijau
+            myColor = 'green'; 
             isOnline = true;
-            alert("Berhasil tersambung ke Room Host! Kamu bermain sebagai warna HIJAU.");
+            alert("Terhubung ke Host! Anda bermain sebagai warna GREEN.");
         }
 
         function setupConnectionObject() {
-            document.getElementById('peer-status').innerText = "Terhubung secara Online! 🎮";
+            document.getElementById('peer-status').innerText = "Terhubung Online! 🎮";
             
             conn.on('data', (data) => {
                 if (data.type === 'ROLL') {
@@ -547,13 +521,11 @@
             copyText.select();
             copyText.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(copyText.value);
-            alert("ID disalin: " + copyText.value);
+            alert("ID berhasil disalin!");
         }
 
-        // Jalankan PeerJS saat halaman dimuat
         initPeer();
         updateUI();
-
     </script>
 </body>
 </html>
