@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Ludo King - iPhone Edition</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #f1c40f;
+            margin-bottom: 5px;
+        }
+        #status {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        /* Desain Papan Game */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 5px;
+            max-width: 350px;
+            margin: 0 auto 20px auto;
+            background-color: #2c3e50;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+        .cell {
+            background-color: #34495e;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-weight: bold;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        /* Warna Khusus Jalur */
+        .track { background-color: #ecf0f1; color: #34495e; }
+        .start-red { background-color: #ff4d4d; color: white; }
+        .start-blue { background-color: #1e90ff; color: white; }
+        .finish { background-color: #f1c40f; color: #121212; }
+
+        /* Bidak Pemain */
+        .token {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: absolute;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        .token.red { background-color: #ff0000; }
+        .token.blue { background-color: #0000ff; }
+
+        /* Kontrol Dadu */
+        #controls {
+            margin-top: 15px;
+        }
+        #dice {
+            width: 60px;
+            height: 60px;
+            background-color: white;
+            color: black;
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            border-radius: 10px;
+            border: 3px solid #f1c40f;
+            box-shadow: 0 4px 8px rgba(255,255,255,0.1);
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        button:disabled {
+            background-color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mini Ludo King 🎲</h1>
+    <div id="status">Giliran: <span style="color: #ff4d4d;">Merah</span></div>
+
+    <!-- Papan Grid 5x5 -->
+    <div id="board">
+        <!-- Baris 1 -->
+        <div class="cell start-red" id="cell-0">R</div>
+        <div class="cell track" id="cell-1">1</div>
+        <div class="cell track" id="cell-2">2</div>
+        <div class="cell track" id="cell-3">3</div>
+        <div class="cell track" id="cell-4">4</div>
+        <!-- Baris 2 -->
+        <div class="cell" id="cell-disabled-1"></div>
+        <div class="cell" id="cell-disabled-2"></div>
+        <div class="cell" id="cell-disabled-3"></div>
+        <div class="cell" id="cell-disabled-4"></div>
+        <div class="cell track" id="cell-5">5</div>
+        <!-- Baris 3 -->
+        <div class="cell finish" id="cell-12">Win</div>
+        <div class="cell" id="cell-disabled-5"></div>
+        <div class="cell" id="cell-disabled-6"></div>
+        <div class="cell" id="cell-disabled-7"></div>
+        <div class="cell track" id="cell-6">6</div>
+        <!-- Baris 4 -->
+        <div class="cell track" id="cell-11">11</div>
+        <div class="cell" id="cell-disabled-8"></div>
+        <div class="cell" id="cell-disabled-9"></div>
+        <div class="cell" id="cell-disabled-10"></div>
+        <div class="cell track" id="cell-7">7</div>
+        <!-- Baris 5 -->
+        <div class="cell track" id="cell-10">10</div>
+        <div class="cell track" id="cell-9">9</div>
+        <div class="cell start-blue" id="cell-8">B</div>
+        <div class="cell" id="cell-disabled-11"></div>
+        <div class="cell" id="cell-disabled-12"></div>
+    </div>
+
+    <div id="controls">
+        <div id="dice">-</div>
+        <button id="roll-btn" onclick="rollDice()">Kocok Dadu</button>
+    </div>
+
+    <script>
+        // Jalur indeks kotak yang dilewati bidak (0 sampai 12)
+        const path = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        
+        let positions = { red: 0, blue: 8 }; // Posisi awal di kotak indeks
+        let currentPlayer = 'red';
+        let gameActive = true;
+
+        // Render bidak awal
+        updateBoard();
+
+        function rollDice() {
+            if (!gameActive) return;
+
+            document.getElementById('roll-btn').disabled = true;
+            let diceEl = document.getElementById('dice');
+            
+            // Efek acak dadu singkat
+            let counter = 0;
+            let interval = setInterval(() => {
+                diceEl.innerText = Math.floor(Math.random() * 6) + 1;
+                counter++;
+                if (counter > 5) {
+                    clearInterval(interval);
+                    
+                    // Angka dadu final
+                    let diceValue = Math.floor(Math.random() * 4) + 1; // Dibatasi max 4 agar pas dengan papan mini
+                    diceEl.innerText = diceValue;
+                    
+                    movePlayer(diceValue);
+                }
+            }, 100);
+        }
+
+        function movePlayer(steps) {
+            let currentIdx = path.indexOf(positions[currentPlayer]);
+            let nextIdx = currentIdx + steps;
+
+            // Jika melebihi kotak finish (indeks 12)
+            if (nextIdx >= path.length) {
+                nextIdx = path.length - 1; 
+            }
+
+            positions[currentPlayer] = path[nextIdx];
+
+            // Sistem Tendang (Ludo Mechanic)
+            if (currentPlayer === 'red' && positions.red === positions.blue && positions.red !== 12) {
+                positions.blue = 8; // Biru ditendang kembali ke start B
+                alert('Mampus! Bidak Merah menendang Biru kembali ke Start!');
+            } else if (currentPlayer === 'blue' && positions.blue === positions.red && positions.blue !== 12) {
+                positions.red = 0; // Merah ditendang kembali ke start R
+                alert('Mampus! Bidak Biru menendang Merah kembali ke Start!');
+            }
+
+            updateBoard();
+
+            // Cek Menang
+            if (positions[currentPlayer] === 12) {
+                document.getElementById('status').innerHTML = `🎉 Pemain ${currentPlayer.toUpperCase()} MENANG!`;
+                gameActive = false;
+                return;
+            }
+
+            // Ganti Giliran
+            currentPlayer = (currentPlayer === 'red') ? 'blue' : 'red';
+            
+            setTimeout(() => {
+                let statusEl = document.getElementById('status');
+                if (currentPlayer === 'red') {
+                    statusEl.innerHTML = 'Giliran: <span style="color: #ff4d4d;">Merah</span>';
+                } else {
+                    statusEl.innerHTML = 'Giliran: <span style="color: #1e90ff;">Biru</span>';
+                }
+                document.getElementById('roll-btn').disabled = false;
+            }, 600);
+        }
+
+        function updateBoard() {
+            // Hapus semua token lama
+            document.querySelectorAll('.token').forEach(el => el.remove());
+
+            // Taruh token Merah
+            let redCell = document.getElementById(`cell-${positions.red}`);
+            if (redCell) {
+                let token = document.createElement('div');
+                token.className = 'token red';
+                redCell.appendChild(token);
+            }
+
+            // Taruh token Biru
+            let blueCell = document.getElementById(`cell-${positions.blue}`);
+            if (blueCell) {
+                let token = document.createElement('div');
+                token.className = 'token blue';
+                // Geser sedikit jika berada di kotak yang sama sebelum ditendang
+                if (positions.red === positions.blue) {
+                    token.style.transform = 'translate(5px, 5px)';
+                }
+                blueCell.appendChild(token);
+            }
+        }
+    </script>
+</body>
+</html>
