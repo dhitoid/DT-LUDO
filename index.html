@@ -234,10 +234,17 @@ input::placeholder{
 /* ===== CENTER ===== */
 
 .center-home{
-    grid-column:7/span 3;
-    grid-row:7/span 3;
-    position:relative;
+    position:absolute;
+    width:120px;
+    height:120px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) rotate(45deg);
+    z-index:5;
     overflow:hidden;
+    border:5px solid white;
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.35);
 }
 
 .center-tri{
@@ -449,6 +456,26 @@ input::placeholder{
         font-size:15px;
     }
 }
+
+.base-red-area{
+    background:#f44336;
+}
+
+.base-green-area{
+    background:#00c853;
+}
+
+.base-yellow-area{
+    background:#ffd600;
+}
+
+.base-blue-area{
+    background:#2962ff;
+}
+
+.path-cell{
+    background:#f8f5e4;
+}
     </style>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 </head>
@@ -532,43 +559,131 @@ input::placeholder{
 
         const boardEl = document.getElementById('ludo-board');
         
-        function buildBoardCells() {
-            for (let r = 0; r < 15; r++) {
-                for (let c = 0; c < 15; c++) {
-                    if(r<6 && c<6) continue;
-                    if(r<6 && c>8) continue;
-                    if(r>8 && c<6) continue;
-                    if(r>8 && c>8) continue;
-                    if(r>=6 && r<=8 && c>=6 && c<=8) {
-                        if(r==6 && c==6) {
-                            let center = document.createElement('div');
-                            center.className = 'center-home';
-                            center.innerHTML = '<div class="center-tri tri-red"></div><div class="center-tri tri-green"></div><div class="center-tri tri-yellow"></div><div class="center-tri tri-blue"></div>';
-                            boardEl.appendChild(center);
-                        }
-                        continue;
-                    }
+function buildBoardCells(){
 
-                    let cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.id = `c-${r}-${c}`;
+    boardEl.innerHTML = "";
 
-                    let coord = `${r}-${c}`;
-                    if(homeTracks.red.includes(coord)) cell.classList.add('bg-red');
-                    if(homeTracks.green.includes(coord)) cell.classList.add('bg-green');
-                    if(homeTracks.yellow.includes(coord)) cell.classList.add('bg-yellow');
-                    if(homeTracks.blue.includes(coord)) cell.classList.add('bg-blue');
-                    
-                    if(coord === "6-1") cell.classList.add('bg-red', 'star-cell');
-                    if(coord === "1-8") cell.classList.add('bg-green', 'star-cell');
-                    if(coord === "8-13") cell.classList.add('bg-yellow', 'star-cell');
-                    if(coord === "13-6") cell.classList.add('bg-blue', 'star-cell');
+    for(let r=0;r<15;r++){
 
-                    boardEl.appendChild(cell);
-                }
+        for(let c=0;c<15;c++){
+
+            const cell = document.createElement("div");
+
+            cell.classList.add("cell");
+
+            cell.id = `c-${r}-${c}`;
+
+            const isTopLeft = r < 6 && c < 6;
+            const isTopRight = r < 6 && c > 8;
+            const isBottomLeft = r > 8 && c < 6;
+            const isBottomRight = r > 8 && c > 8;
+
+            // ===== BASE AREAS =====
+
+            if(isTopLeft){
+                cell.classList.add("base-red-area");
             }
+
+            else if(isTopRight){
+                cell.classList.add("base-green-area");
+            }
+
+            else if(isBottomRight){
+                cell.classList.add("base-yellow-area");
+            }
+
+            else if(isBottomLeft){
+                cell.classList.add("base-blue-area");
+            }
+
+            // ===== PATH =====
+
+            else{
+                cell.classList.add("path-cell");
+            }
+
+            // ===== COLOR TRACKS =====
+
+            const coord = `${r}-${c}`;
+
+            if(homeTracks.red.includes(coord)){
+                cell.classList.add("bg-red");
+            }
+
+            if(homeTracks.green.includes(coord)){
+                cell.classList.add("bg-green");
+            }
+
+            if(homeTracks.yellow.includes(coord)){
+                cell.classList.add("bg-yellow");
+            }
+
+            if(homeTracks.blue.includes(coord)){
+                cell.classList.add("bg-blue");
+            }
+
+            boardEl.appendChild(cell);
         }
-        buildBoardCells();
+    }
+
+    // ===== CENTER =====
+
+    const center = document.createElement("div");
+
+    center.className = "center-home";
+
+    center.innerHTML = `
+    <div class="center-tri tri-red"></div>
+    <div class="center-tri tri-green"></div>
+    <div class="center-tri tri-yellow"></div>
+    <div class="center-tri tri-blue"></div>
+    `;
+
+    boardEl.appendChild(center);
+
+    buildBases();
+}
+
+function buildBases(){
+    createBase("red",1,1);
+    createBase("green",1,10);
+    createBase("yellow",10,10);
+    createBase("blue",10,1);
+}
+
+function createBase(color,row,col){
+
+    const positions = [
+        [row+1,col+1],
+        [row+1,col+3],
+        [row+3,col+1],
+        [row+3,col+3]
+    ];
+
+    positions.forEach((p,i)=>{
+
+        const home = document.createElement("div");
+
+        home.className = "inner-box";
+
+        home.id = `${color[0]}-home-${i}`;
+
+        home.style.gridRow = p[0]+1;
+        home.style.gridColumn = p[1]+1;
+
+        home.style.position = "absolute";
+
+        home.style.width = "52px";
+        home.style.height = "52px";
+
+        const cell =
+        document.getElementById(`c-${p[0]}-${p[1]}`);
+
+        if(cell){
+            cell.appendChild(home);
+        }
+    });
+}
 
         function updateUI() {
             document.querySelectorAll('.pawn').forEach(p => p.remove());
