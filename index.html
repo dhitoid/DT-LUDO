@@ -1,387 +1,437 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ludo King Pro - 4 Player Edition</title>
-    <audio id="diceSound"
-src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
-<audio id="moveSound"
-src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
-    <style>
-        :root{
-    --red:#ff4d4d;
-    --green:#32d74b;
-    --yellow:#ffd60a;
-    --blue:#0a84ff;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-    --dark:#111827;
-    --card:#1f2937;
-    --glass:rgba(255,255,255,0.08);
+<title>Ludo King Ultimate</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+<style>
+
+:root{
+    --red:#ff3b30;
+    --green:#34c759;
+    --yellow:#ffcc00;
+    --blue:#007aff;
+
+    --bg:#2d1708;
+    --wood1:#6d4427;
+    --wood2:#4a2c17;
+
+    --shadow:0 10px 25px rgba(0,0,0,.35);
 }
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    font-family:'Trebuchet MS',sans-serif;
+    font-family:'Poppins',sans-serif;
     background:
-    radial-gradient(circle at top,
-    #53340f 0%,
-    #2c1608 40%,
-    #140b05 100%);
+    radial-gradient(circle at top,#784421 0%,#381d0c 60%,#1d0d04 100%);
     min-height:100vh;
-    color:white;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:14px;
+    color:white;
     overflow-x:hidden;
-    position:relative;
+    padding:14px;
 }
 
 body::before{
     content:'';
     position:fixed;
     inset:0;
-    background:
-    url("https://www.transparenttextures.com/patterns/wood-pattern.png");
-    opacity:.25;
+    background:url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+    opacity:.18;
     pointer-events:none;
 }
 
-/* ===== TITLE ===== */
+/* =========================
+HEADER
+========================= */
 
-h1{
-    margin-top:8px;
+.logo{
     font-size:34px;
     font-weight:900;
-    letter-spacing:1px;
+    margin-top:6px;
+    letter-spacing:.5px;
     color:#ffe082;
+
     text-shadow:
     0 2px 0 #ff9800,
-    0 4px 0 #e65100,
-    0 8px 18px rgba(0,0,0,.7);
+    0 5px 0 #e65100,
+    0 10px 18px rgba(0,0,0,.5);
+}
+
+.sub{
+    opacity:.9;
+    margin-bottom:14px;
+    font-size:13px;
+}
+
+/* =========================
+TOP PANEL
+========================= */
+
+.panel{
+    width:100%;
+    max-width:430px;
+
+    background:
+    linear-gradient(180deg,#6b3d20,#3d2111);
+
+    border-radius:28px;
+
+    padding:16px;
+
+    border:4px solid #ffcc80;
+
+    box-shadow:
+    0 8px 0 #2a170d,
+    0 18px 30px rgba(0,0,0,.4);
+
     margin-bottom:16px;
 }
 
-/* ===== PANEL ===== */
-
-#online-panel{
-    width:100%;
-    max-width:390px;
-    background:
-    linear-gradient(
-    180deg,
-    #5d4037,
-    #3e2723);
-    border:4px solid #ffcc80;
-    border-radius:24px;
-    padding:14px;
-    margin-bottom:14px;
-    box-shadow:
-    0 8px 0 #2d1b16,
-    0 14px 30px rgba(0,0,0,.5);
+.panel-title{
+    font-size:15px;
+    font-weight:700;
+    margin-bottom:10px;
 }
 
 .row{
     display:flex;
-    gap:8px;
-    margin-top:8px;
+    gap:10px;
+    margin-top:10px;
 }
 
-input{
+.input{
     flex:1;
-    background:#111827;
+    height:48px;
     border:none;
-    border-radius:14px;
-    padding:12px;
+    border-radius:16px;
+    background:#111827;
     color:white;
+    padding:0 14px;
     outline:none;
     font-size:14px;
 }
 
-input::placeholder{
-    color:#94a3b8;
+.input::placeholder{
+    color:#9ca3af;
 }
 
-.btn-sm{
+.btn{
     border:none;
-    border-radius:14px;
-    padding:12px 16px;
-    font-weight:700;
-    color:white;
     cursor:pointer;
+    color:white;
+    font-weight:700;
+    border-radius:16px;
     transition:.2s;
-    background:linear-gradient(45deg,#0a84ff,#5ac8fa);
 }
 
-.btn-sm:hover{
-    transform:scale(1.05);
+.btn:active{
+    transform:scale(.95);
 }
 
-/* ===== STATUS ===== */
-
-#status{
-    margin-bottom:16px;
-    background:
-    linear-gradient(
-    180deg,
-    #6d4c41,
-    #4e342e);
-    padding:12px 24px;
-    border-radius:999px;
-    font-weight:900;
-    border:3px solid #ffcc80;
-    box-shadow:
-    0 5px 0 #3e2723,
-    0 10px 20px rgba(0,0,0,.35);
+.btn-copy{
+    width:100px;
+    background:linear-gradient(180deg,#4facfe,#007aff);
 }
 
-/* ===== BOARD ===== */
+.btn-join{
+    width:120px;
+    background:linear-gradient(180deg,#4cff84,#0bbd44);
+}
 
-#ludo-board{
+.status-box{
+    margin-top:12px;
+    background:rgba(255,255,255,.08);
+    padding:12px;
+    border-radius:16px;
+    font-size:13px;
+}
+
+/* =========================
+TURN
+========================= */
+
+.turn-bar{
     width:100%;
-    max-width:410px;
-    aspect-ratio:1;
+    max-width:430px;
+    padding:14px 20px;
+    margin-bottom:14px;
+
+    border-radius:999px;
+
+    background:
+    linear-gradient(180deg,#704225,#442515);
+
+    border:3px solid #ffcf88;
+
+    box-shadow:
+    0 6px 0 #2c170d,
+    0 12px 22px rgba(0,0,0,.3);
+
+    text-align:center;
+    font-weight:800;
+    font-size:16px;
+}
+
+/* =========================
+BOARD
+========================= */
+
+.board-wrapper{
+    position:relative;
+}
+
+#board{
+    width:min(92vw,430px);
+    height:min(92vw,430px);
+
+    background:#fff5d6;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    border:10px solid #8b5a2b;
+
+    box-shadow:
+    0 0 0 5px #c99555,
+    0 18px 30px rgba(0,0,0,.45);
+
     display:grid;
     grid-template-columns:repeat(15,1fr);
     grid-template-rows:repeat(15,1fr);
-    background:#fff8dc;
-    border-radius:28px;
-    overflow:hidden;
-    border:10px solid #8d6e63;
-    box-shadow:
-    0 0 0 6px #d7a86e,
-    0 12px 30px rgba(0,0,0,.6),
-    inset 0 0 25px rgba(255,255,255,.5);
+
     position:relative;
 }
 
-#ludo-board::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:
-    radial-gradient(circle,
-    rgba(255,215,0,.08),
-    transparent 70%);
-    pointer-events:none;
-}
-
-/* ===== CELLS ===== */
+/* =========================
+CELLS
+========================= */
 
 .cell{
     border:1px solid rgba(0,0,0,.08);
-    display:flex;
-    align-items:center;
-    justify-content:center;
     position:relative;
-    background:#fffef7;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#fffdf7;
 }
 
-.cell::after{
-    content:'';
+.safe{
+    background:#fff7c2 !important;
+}
+
+.safe::after{
+    content:'★';
+    color:#f59e0b;
+    font-size:12px;
     position:absolute;
-    inset:2px;
-    border-radius:4px;
 }
 
-/* ===== BASE ===== */
+/* =========================
+BASES
+========================= */
 
-.base-red,
-.base-green,
-.base-blue,
-.base-yellow{
-    padding:12px;
+.base{
+    position:absolute;
+    width:40%;
+    height:40%;
+    padding:14px;
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    position:relative;
+    gap:14px;
 }
 
-.base-red{
-    background:linear-gradient(145deg,#ff5252,#d50000);
+.base.red{
+    top:0;
+    left:0;
+    background:linear-gradient(145deg,#ff5d5d,#d60000);
 }
 
-.base-green{
-    background:linear-gradient(145deg,#69f0ae,#00c853);
+.base.green{
+    top:0;
+    right:0;
+    background:linear-gradient(145deg,#62ff98,#00b34b);
 }
 
-.base-yellow{
-    background:linear-gradient(145deg,#ffff8d,#ffd600);
+.base.yellow{
+    bottom:0;
+    right:0;
+    background:linear-gradient(145deg,#fff27a,#ffc400);
 }
 
-.base-blue{
-    background:linear-gradient(145deg,#82b1ff,#2962ff);
+.base.blue{
+    bottom:0;
+    left:0;
+    background:linear-gradient(145deg,#71b7ff,#005eff);
 }
 
-.inner-box{
+.base-home{
     background:white;
     border-radius:20px;
-    border:4px solid rgba(255,255,255,.9);
-    box-shadow:
-    inset 0 3px 8px rgba(0,0,0,.3),
-    0 5px 10px rgba(0,0,0,.25);
+
+    border:5px solid rgba(255,255,255,.8);
+
     display:flex;
     align-items:center;
     justify-content:center;
+
+    box-shadow:
+    inset 0 3px 8px rgba(0,0,0,.2),
+    0 6px 12px rgba(0,0,0,.25);
 }
 
-/* ===== CENTER ===== */
+/* =========================
+CENTER
+========================= */
 
-.center-home{
+.center{
     position:absolute;
-    width:120px;
-    height:120px;
+    width:28%;
+    height:28%;
     left:50%;
     top:50%;
     transform:translate(-50%,-50%) rotate(45deg);
-    z-index:5;
     overflow:hidden;
     border:5px solid white;
-    box-shadow:
-    0 8px 20px rgba(0,0,0,.35);
+    border-radius:10px;
+    z-index:4;
 }
 
-.center-tri{
+.tri{
     position:absolute;
     width:100%;
     height:100%;
 }
 
-.tri-red{
+.tr-red{
     background:var(--red);
     clip-path:polygon(0 0,50% 50%,0 100%);
 }
 
-.tri-green{
+.tr-green{
     background:var(--green);
     clip-path:polygon(0 0,100% 0,50% 50%);
 }
 
-.tri-yellow{
+.tr-yellow{
     background:var(--yellow);
     clip-path:polygon(100% 0,100% 100%,50% 50%);
 }
 
-.tri-blue{
+.tr-blue{
     background:var(--blue);
     clip-path:polygon(0 100%,100% 100%,50% 50%);
 }
 
-/* ===== PATH COLORS ===== */
+/* =========================
+TRACK COLORS
+========================= */
 
-.bg-red{
-    background:#ffccd5 !important;
-}
+.red-path{background:#ffd4d4;}
+.green-path{background:#d7ffd7;}
+.yellow-path{background:#fff5b7;}
+.blue-path{background:#d7e9ff;}
 
-.bg-green{
-    background:#d8f3dc !important;
-}
-
-.bg-yellow{
-    background:#fff3bf !important;
-}
-
-.bg-blue{
-    background:#d0ebff !important;
-}
-
-/* ===== PAWN ===== */
+/* =========================
+PAWN
+========================= */
 
 .pawn{
-    width:20px;
-    height:20px;
+    width:18px;
+    height:18px;
     border-radius:50%;
-    border:3px solid white;
-    z-index:10;
-    position:relative;
+    border:2px solid white;
+    position:absolute;
+    z-index:9;
     box-shadow:
     inset 0 3px 4px rgba(255,255,255,.8),
-    inset 0 -4px 8px rgba(0,0,0,.25),
-    0 4px 10px rgba(0,0,0,.45);
-    animation:spawn .25s ease;
+    0 4px 10px rgba(0,0,0,.4);
+
     transition:.25s;
 }
 
-.pawn::before{
-    content:'';
-    position:absolute;
-    width:35%;
-    height:35%;
-    border-radius:50%;
-    background:rgba(255,255,255,.9);
-    top:2px;
-    left:3px;
+.pawn.red{
+    background:var(--red);
 }
 
-@keyframes spawn{
-    from{
-        transform:scale(0);
-    }
-    to{
-        transform:scale(1);
-    }
+.pawn.green{
+    background:var(--green);
 }
 
-.pawn:hover{
-    transform:scale(1.15);
+.pawn.yellow{
+    background:var(--yellow);
 }
 
-.pawn.can-move{
+.pawn.blue{
+    background:var(--blue);
+}
+
+.pawn.active{
+    animation:pulse .7s infinite alternate;
     cursor:pointer;
-
-    animation:
-    pawnPulse .7s infinite alternate;
 }
 
-@keyframes pawnPulse{
+@keyframes pulse{
     from{
         transform:scale(1);
         filter:drop-shadow(0 0 0 gold);
     }
-
     to{
-        transform:scale(1.28);
-        filter:drop-shadow(0 0 12px gold);
+        transform:scale(1.25);
+        filter:drop-shadow(0 0 10px gold);
     }
 }
 
-/* ===== DICE ===== */
+/* =========================
+BOTTOM CONTROLS
+========================= */
 
-#control-area{
+.bottom{
     margin-top:18px;
     display:flex;
     align-items:center;
     gap:18px;
 }
 
-.dice-box{
-    width:78px;
-    height:78px;
+.dice{
+    width:82px;
+    height:82px;
     border-radius:24px;
+
     background:
-    linear-gradient(145deg,
-    #fffefc,
-    #ffe0b2);
-    color:#5d4037;
-    font-size:38px;
+    linear-gradient(145deg,#fff,#ffe2ba);
+
+    color:#5c3b16;
+
+    font-size:40px;
     font-weight:900;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     border:5px solid white;
+
     box-shadow:
-    0 8px 0 #bcaaa4,
-    0 15px 20px rgba(0,0,0,.45);
-    transition:.2s;
+    0 8px 0 #b59a87,
+    0 15px 20px rgba(0,0,0,.35);
 }
 
-.dice-active{
+.shake{
     animation:shake .08s infinite;
 }
 
@@ -391,529 +441,664 @@ input::placeholder{
     100%{transform:rotate(2deg)}
 }
 
-/* ===== BUTTON ===== */
-
-.btn-roll{
+.roll-btn{
     border:none;
+
     border-radius:999px;
-    padding:16px 34px;
+
+    padding:18px 34px;
+
     font-size:17px;
-    font-weight:900;
+    font-weight:800;
+
     color:white;
+
+    cursor:pointer;
+
     background:
-    linear-gradient(
-    180deg,
-    #66ff6a,
-    #00c853);
-    border:3px solid rgba(255,255,255,.6);
+    linear-gradient(180deg,#6dff84,#00b843);
+
+    border:3px solid rgba(255,255,255,.7);
+
     box-shadow:
-    0 7px 0 #1b5e20,
-    0 14px 18px rgba(0,0,0,.4);
+    0 8px 0 #167532,
+    0 14px 20px rgba(0,0,0,.3);
+
     transition:.15s;
 }
 
-.btn-roll:active{
-    transform:translateY(5px);
+.roll-btn:active{
+    transform:translateY(4px);
     box-shadow:
-    0 2px 0 #1b5e20;
+    0 2px 0 #167532;
 }
 
-.btn-roll:hover{
-    transform:translateY(-2px) scale(1.03);
-}
-
-.btn-roll:disabled{
+.roll-btn:disabled{
     opacity:.45;
     transform:none;
     box-shadow:none;
+    cursor:not-allowed;
 }
 
-/* ===== MOBILE ===== */
+/* =========================
+RESPONSIVE
+========================= */
 
 @media(max-width:480px){
 
-    h1{
-        font-size:24px;
+    .logo{
+        font-size:26px;
     }
 
-    #ludo-board{
-        border-radius:22px;
+    .dice{
+        width:68px;
+        height:68px;
+        font-size:30px;
+    }
+
+    .roll-btn{
+        padding:15px 24px;
+        font-size:15px;
     }
 
     .pawn{
-        width:15px;
-        height:15px;
-    }
-
-    .dice-box{
-        width:62px;
-        height:62px;
-        font-size:28px;
-    }
-
-    .btn-roll{
-        padding:14px 22px;
-        font-size:15px;
+        width:14px;
+        height:14px;
     }
 }
 
-.base-red-area{
-    background:#f44336;
-}
-
-.base-green-area{
-    background:#00c853;
-}
-
-.base-yellow-area{
-    background:#ffd600;
-}
-
-.base-blue-area{
-    background:#2962ff;
-}
-
-.path-cell{
-    background:#f8f5e4;
-}
-    </style>
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+</style>
 </head>
 <body>
 
-    <h1>Ludo King Pro 🎲</h1>
+<div class="logo">Ludo King 🎲</div>
+<div class="sub">Ultimate Multiplayer Edition</div>
 
-    <div id="online-panel">
-        <div><strong>Status:</strong> <span id="peer-status">Menghubungkan P2P... (Bisa dimainkan offline langsung)</span></div>
-        <div class="row">
-            <input type="text" id="my-id" readonly placeholder="ID Kamu">
-            <button class="btn-sm" onclick="salinID()">Salin ID</button>
-        </div>
-        <div class="row" style="margin-top: 8px;">
-            <input type="text" id="room-id" placeholder="Masukkan ID Teman">
-            <button class="btn-sm" style="background:var(--green)" onclick="connectToPeer()">Join Room</button>
-        </div>
+<div class="panel">
+
+    <div class="panel-title">
+        Multiplayer Online
     </div>
 
-    <div id="status">Menginisialisasi papan...</div>
-
-    <div id="ludo-board">
-        <div class="base-red" id="base-red">
-            <div class="inner-box" id="r-home-0"></div><div class="inner-box" id="r-home-1"></div>
-            <div class="inner-box" id="r-home-2"></div><div class="inner-box" id="r-home-3"></div>
-        </div>
-        
-        <div class="base-green" id="base-green">
-            <div class="inner-box" id="g-home-0"></div><div class="inner-box" id="g-home-1"></div>
-            <div class="inner-box" id="g-home-2"></div><div class="inner-box" id="g-home-3"></div>
-        </div>
-
-        <div class="base-blue" id="base-blue">
-            <div class="inner-box" id="b-home-0"></div><div class="inner-box" id="b-home-1"></div>
-            <div class="inner-box" id="b-home-2"></div><div class="inner-box" id="b-home-3"></div>
-        </div>
-
-        <div class="base-yellow" id="base-yellow">
-            <div class="inner-box" id="y-home-0"></div><div class="inner-box" id="y-home-1"></div>
-            <div class="inner-box" id="y-home-2"></div><div class="inner-box" id="y-home-3"></div>
-        </div>
+    <div class="row">
+        <input class="input" type="text" id="myId" readonly placeholder="ID Kamu">
+        <button class="btn btn-copy" onclick="copyId()">Salin</button>
     </div>
 
-    <div id="control-area">
-        <div class="dice-box" id="dice-view">-</div>
-        <button class="btn-roll" id="roll-btn" onclick="kocokDadu()">Kocok Dadu</button>
+    <div class="row">
+        <input class="input" type="text" id="joinId" placeholder="Masukkan ID Teman">
+        <button class="btn btn-join" onclick="joinRoom()">Join</button>
     </div>
 
-    <script>
-        // Jalur koordinat utama Ludo melingkar 52 kotak
-        const mainTrack = [
-            "6-1","6-2","6-3","6-4","6-5",
-            "5-6","4-6","3-6","2-6","1-6","0-6","0-7","0-8","1-8","2-8","3-8","4-8","5-8",
-            "6-9","6-10","6-11","6-12","6-13","6-14","7-14","8-14","8-13","8-12","8-11","8-10","8-9",
-            "9-8","10-8","11-8","12-8","13-8","14-8","14-7","14-6","13-6","12-6","11-6","10-6","9-6",
-            "8-5","8-4","8-3","8-2","8-1","8-0","7-0","6-0"
-        ];
+    <div class="status-box" id="peerStatus">
+        Menghubungkan P2P...
+    </div>
 
-        // Jalur finish masing-masing warna
-        const homeTracks = {
-            red: ["7-1","7-2","7-3","7-4","7-5","7-6"],
-            green: ["1-7","2-7","3-7","4-7","5-7","6-7"],
-            yellow: ["7-13","7-12","7-11","7-10","7-9","7-8"],
-            blue: ["13-7","12-7","11-7","10-7","9-7","8-7"]
-        };
+</div>
 
-        const startIndexes = { red: 0, green: 13, yellow: 26, blue: 39 };
+<div class="turn-bar" id="turnInfo">
+    Memuat papan...
+</div>
 
-        let players = ['red', 'green', 'yellow', 'blue'];
-        let turnIndex = 0; 
-        let currentRoll = 0;
-        let myColor = 'red'; 
-        let isOnline = false;
+<div class="board-wrapper">
 
-        let positions = {
-            red: ['H','H','H','H'],
-            green: ['H','H','H','H'],
-            yellow: ['H','H','H','H'],
-            blue: ['H','H','H','H']
-        };
+<div id="board"></div>
 
-        const boardEl = document.getElementById('ludo-board');
-        
-function buildBoardCells(){
+<div class="base red" id="base-red">
+    <div class="base-home" id="red-home-0"></div>
+    <div class="base-home" id="red-home-1"></div>
+    <div class="base-home" id="red-home-2"></div>
+    <div class="base-home" id="red-home-3"></div>
+</div>
 
-    boardEl.innerHTML = "";
+<div class="base green" id="base-green">
+    <div class="base-home" id="green-home-0"></div>
+    <div class="base-home" id="green-home-1"></div>
+    <div class="base-home" id="green-home-2"></div>
+    <div class="base-home" id="green-home-3"></div>
+</div>
+
+<div class="base yellow" id="base-yellow">
+    <div class="base-home" id="yellow-home-0"></div>
+    <div class="base-home" id="yellow-home-1"></div>
+    <div class="base-home" id="yellow-home-2"></div>
+    <div class="base-home" id="yellow-home-3"></div>
+</div>
+
+<div class="base blue" id="base-blue">
+    <div class="base-home" id="blue-home-0"></div>
+    <div class="base-home" id="blue-home-1"></div>
+    <div class="base-home" id="blue-home-2"></div>
+    <div class="base-home" id="blue-home-3"></div>
+</div>
+
+<div class="center">
+    <div class="tri tr-red"></div>
+    <div class="tri tr-green"></div>
+    <div class="tri tr-yellow"></div>
+    <div class="tri tr-blue"></div>
+</div>
+
+</div>
+
+<div class="bottom">
+
+    <div class="dice" id="dice">
+        -
+    </div>
+
+    <button class="roll-btn" id="rollBtn" onclick="rollDice()">
+        Kocok Dadu
+    </button>
+
+</div>
+
+<audio id="diceSound" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+<audio id="moveSound" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+<audio id="killSound" src="https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3"></audio>
+
+<script>
+
+/* =========================
+TRACKS
+========================= */
+
+const mainTrack = [
+"6-1","6-2","6-3","6-4","6-5",
+"5-6","4-6","3-6","2-6","1-6","0-6","0-7","0-8","1-8","2-8","3-8","4-8","5-8",
+"6-9","6-10","6-11","6-12","6-13","6-14","7-14","8-14","8-13","8-12","8-11","8-10","8-9",
+"9-8","10-8","11-8","12-8","13-8","14-8","14-7","14-6","13-6","12-6","11-6","10-6","9-6",
+"8-5","8-4","8-3","8-2","8-1","8-0","7-0","6-0"
+];
+
+const homeTracks = {
+    red:["7-1","7-2","7-3","7-4","7-5","7-6"],
+    green:["1-7","2-7","3-7","4-7","5-7","6-7"],
+    yellow:["7-13","7-12","7-11","7-10","7-9","7-8"],
+    blue:["13-7","12-7","11-7","10-7","9-7","8-7"]
+};
+
+const startIndexes = {
+    red:0,
+    green:13,
+    yellow:26,
+    blue:39
+};
+
+const safeSpots = [0,8,13,21,26,34,39,47];
+
+const players = ["red","green","yellow","blue"];
+
+let turnIndex = 0;
+let currentRoll = 0;
+
+let myColor = "red";
+let online = false;
+
+let positions = {
+    red:['H','H','H','H'],
+    green:['H','H','H','H'],
+    yellow:['H','H','H','H'],
+    blue:['H','H','H','H']
+};
+
+/* =========================
+BOARD
+========================= */
+
+const board = document.getElementById("board");
+
+function buildBoard(){
+
+    board.innerHTML='';
 
     for(let r=0;r<15;r++){
 
         for(let c=0;c<15;c++){
 
-            const cell = document.createElement("div");
+            const cell = document.createElement('div');
 
-            cell.classList.add("cell");
+            cell.className='cell';
 
-            cell.id = `c-${r}-${c}`;
-
-            const isTopLeft = r < 6 && c < 6;
-            const isTopRight = r < 6 && c > 8;
-            const isBottomLeft = r > 8 && c < 6;
-            const isBottomRight = r > 8 && c > 8;
-
-            // ===== BASE AREAS =====
-
-            if(isTopLeft){
-                cell.classList.add("base-red-area");
-            }
-
-            else if(isTopRight){
-                cell.classList.add("base-green-area");
-            }
-
-            else if(isBottomRight){
-                cell.classList.add("base-yellow-area");
-            }
-
-            else if(isBottomLeft){
-                cell.classList.add("base-blue-area");
-            }
-
-            // ===== PATH =====
-
-            else{
-                cell.classList.add("path-cell");
-            }
-
-            // ===== COLOR TRACKS =====
+            cell.id=`c-${r}-${c}`;
 
             const coord = `${r}-${c}`;
 
             if(homeTracks.red.includes(coord)){
-                cell.classList.add("bg-red");
+                cell.classList.add('red-path');
             }
 
             if(homeTracks.green.includes(coord)){
-                cell.classList.add("bg-green");
+                cell.classList.add('green-path');
             }
 
             if(homeTracks.yellow.includes(coord)){
-                cell.classList.add("bg-yellow");
+                cell.classList.add('yellow-path');
             }
 
             if(homeTracks.blue.includes(coord)){
-                cell.classList.add("bg-blue");
+                cell.classList.add('blue-path');
             }
 
-            boardEl.appendChild(cell);
+            board.appendChild(cell);
         }
     }
 
-    // ===== CENTER =====
-
-    const center = document.createElement("div");
-
-    center.className = "center-home";
-
-    center.innerHTML = `
-    <div class="center-tri tri-red"></div>
-    <div class="center-tri tri-green"></div>
-    <div class="center-tri tri-yellow"></div>
-    <div class="center-tri tri-blue"></div>
-    `;
-
-    boardEl.appendChild(center);
-
-    buildBases();
-}
-
-function buildBases(){
-    createBase("red",1,1);
-    createBase("green",1,10);
-    createBase("yellow",10,10);
-    createBase("blue",10,1);
-}
-
-function createBase(color,row,col){
-
-    const positions = [
-        [row+1,col+1],
-        [row+1,col+3],
-        [row+3,col+1],
-        [row+3,col+3]
-    ];
-
-    positions.forEach((p,i)=>{
-
-        const home = document.createElement("div");
-
-        home.className = "inner-box";
-
-        home.id = `${color[0]}-home-${i}`;
-
-        home.style.gridRow = p[0]+1;
-        home.style.gridColumn = p[1]+1;
-
-        home.style.position = "absolute";
-
-        home.style.width = "52px";
-        home.style.height = "52px";
-
-        const cell =
-        document.getElementById(`c-${p[0]}-${p[1]}`);
-
-        if(cell){
-            cell.appendChild(home);
-        }
+    safeSpots.forEach(index=>{
+        const coord = mainTrack[index];
+        document.getElementById(`c-${coord}`)?.classList.add('safe');
     });
 }
 
-        function updateUI() {
-            document.querySelectorAll('.pawn').forEach(p => p.remove());
+buildBoard();
 
-            players.forEach(color => {
-                positions[color].forEach((pos, idx) => {
-                    let container;
-                    if (pos === 'H') {
-                        container = document.getElementById(`${color}-home-${idx}`);
-                    } else if (pos.toString().startsWith('Home-')) {
-                        let homeIdx = parseInt(pos.split('-'));
-                        let coord = homeTracks[color][homeIdx];
-                        container = document.getElementById(`c-${coord}`);
-                    } else if (pos === 'F') {
-                        return; 
-                    } else {
-                        let coord = mainTrack[pos];
-                        container = document.getElementById(`c-${coord}`);
-                    }
+/* =========================
+RENDER
+========================= */
 
-                    if (container) {
-                        let pawn = document.createElement('div');
-                        pawn.className = `pawn`; pawn.style.background = ` radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), var(--${color}) )`;
-                        pawn.dataset.color = color;
-                        pawn.dataset.idx = idx;
-                        
-                        // VALIDASI KRUSIAL: Hanya izinkan warna yang memiliki giliran aktif saat ini yang bisa melangkah
-                        if (color === players[turnIndex] && (!isOnline || color === myColor) && currentRoll > 0) {
-                            if (bisaJalan(color, pos, currentRoll)) {
-                                pawn.classList.add('can-move');
-                                pawn.onclick = () => eksekusiJalan(color, idx);
-                            }
-                        }
-                        container.appendChild(pawn);
-                    }
-                });
-            });
+function render(){
 
-            let activeColor = players[turnIndex];
-            let statusEl = document.getElementById('status');
-            statusEl.innerHTML = `Giliran: <span style="color:var(--${activeColor})">${activeColor.toUpperCase()}</span>`;
-            
-            let rollBtn = document.getElementById('roll-btn');
-            if (activeColor === myColor || !isOnline) {
-                rollBtn.disabled = currentRoll !== 0;
-            } else {
-                rollBtn.disabled = true;
+    document.querySelectorAll('.pawn').forEach(e=>e.remove());
+
+    players.forEach(color=>{
+
+        positions[color].forEach((pos,i)=>{
+
+            let parent;
+
+            if(pos === 'H'){
+
+                parent = document.getElementById(`${color}-home-${i}`);
+
+            }else if(pos === 'F'){
+
+                return;
+
+            }else if(String(pos).startsWith('HOME')){
+
+                let idx = Number(pos.split('-')[1]);
+
+                const coord = homeTracks[color][idx];
+
+                parent = document.getElementById(`c-${coord}`);
+
+            }else{
+
+                const coord = mainTrack[pos];
+
+                parent = document.getElementById(`c-${coord}`);
             }
-        }
 
-        function kocokDadu() {
-            let diceEl = document.getElementById('dice-view');
-            diceEl.classList.add('dice-active');
-            document.getElementById('roll-btn').disabled = true;
-            document.getElementById('diceSound').play();
-            let shakeInterval = setInterval(() => {
-                diceEl.innerText = Math.floor(Math.random() * 6) + 1;
-            }, 80); 
+            if(parent){
 
-            setTimeout(() => {
-                clearInterval(shakeInterval);
-                currentRoll = Math.floor(Math.random() * 6) + 1;
-                diceEl.innerText = currentRoll;
-                diceEl.classList.remove('dice-active');
+                const pawn = document.createElement('div');
 
-                kirimDataRealtime({ type: 'ROLL', roll: currentRoll });
+                pawn.className=`pawn ${color}`;
 
-                let color = players[turnIndex];
-                let adaLangkah = positions[color].some(pos => bisaJalan(color, pos, currentRoll));
+                if(
+                    color === players[turnIndex]
+                    &&
+                    currentRoll > 0
+                    &&
+                    canMove(color,pos,currentRoll)
+                ){
+                    pawn.classList.add('active');
 
-                if (!adaLangkah) {
-                    setTimeout(() => {
-                        currentRoll = 0;
-                        operGiliran();
-                    }, 1200);
-                } else {
-                    updateUI(); 
+                    pawn.onclick=()=>{
+                        movePawn(color,i);
+                    };
                 }
-            }, 600);
-        }
 
-        function bisaJalan(color, pos, roll) {
-            if (pos === 'H' && roll === 6) return true; 
-            if (pos === 'H' && roll !== 6) return false;
-            if (pos === 'F') return false;
-            
-            if (pos.toString().startsWith('Home-')) {
-                let curHomeIdx = parseInt(pos.split('-'));
-                return (curHomeIdx + roll) <= 5;
+                parent.appendChild(pawn);
             }
-            return true;
+
+        });
+
+    });
+
+    const active = players[turnIndex];
+
+    document.getElementById('turnInfo').innerHTML=
+    `Giliran :
+    <span style="color:var(--${active})">
+    ${active.toUpperCase()}
+    </span>`;
+
+    document.getElementById('rollBtn').disabled=
+    currentRoll !== 0;
+}
+
+/* =========================
+MOVE
+========================= */
+
+function canMove(color,pos,roll){
+
+    if(pos === 'F') return false;
+
+    if(pos === 'H'){
+        return roll === 6;
+    }
+
+    if(String(pos).startsWith('HOME')){
+
+        const idx = Number(pos.split('-')[1]);
+
+        return idx + roll <= 5;
+    }
+
+    return true;
+}
+
+function movePawn(color,index){
+
+    document.getElementById('moveSound').play();
+
+    let pos = positions[color][index];
+
+    if(pos === 'H'){
+
+        positions[color][index]=startIndexes[color];
+
+    }else if(String(pos).startsWith('HOME')){
+
+        const idx = Number(pos.split('-')[1]);
+
+        const next = idx + currentRoll;
+
+        if(next >= 5){
+
+            positions[color][index]='F';
+
+        }else{
+
+            positions[color][index]=`HOME-${next}`;
         }
 
-        function eksekusiJalan(color, pawnIdx) {
-            let currentPos = positions[color][pawnIdx];
-            document.getElementById('moveSound').play();
-            if (currentPos === 'H' && currentRoll === 6) {
-                positions[color][pawnIdx] = startIndexes[color];
-            } else {
-                let langkahSisa = currentRoll;
+    }else{
 
-                if (currentPos.toString().startsWith('Home-')) {
-                    let subIdx = parseInt(currentPos.split('-'));
-                    positions[color][pawnIdx] = `Home-${subIdx + langkahSisa}`;
-                } else {
-                    let targetIdx = currentPos + langkahSisa;
-                    let batasFinish = (startIndexes[color] - 1 + 52) % 52; 
+        let next = pos;
 
-                    let passedTurn = false;
-                    for (let i = 1; i <= langkahSisa; i++) {
-                        let checkPos = (currentPos + i) % 52;
-                        if (currentPos === batasFinish) {
-                            let sisaLangkahHome = langkahSisa - i;
-                            positions[color][pawnIdx] = `Home-${sisaLangkahHome}`;
-                            passedTurn = true;
-                            break;
-                        }
-                        currentPos = (currentPos + 1) % 52;
-                    }
+        for(let i=0;i<currentRoll;i++){
 
-                    if (!passedTurn) {
-                        positions[color][pawnIdx] = targetIdx % 52;
-                    }
+            next=(next+1)%52;
+
+            const end=(startIndexes[color]+50)%52;
+
+            if(next===end){
+
+                let remain=currentRoll-i-1;
+
+                if(remain>=5){
+
+                    positions[color][index]='F';
+
+                }else{
+
+                    positions[color][index]=`HOME-${remain}`;
                 }
-            }
 
-            if (positions[color][pawnIdx] === 'Home-5') {
-                positions[color][pawnIdx] = 'F';
-                alert(`Hore! Bidak ${color.toUpperCase()} berhasil finish! 🎉`);
-            }
-
-            efekMakanMengebom(color, positions[color][pawnIdx]);
-
-            currentRoll = 0;
-            document.getElementById('dice-view').innerText = '-';
-
-            kirimDataRealtime({ type: 'MOVE', positions: positions });
-
-            if (positions[color].every(p => p === 'F')) {
-                alert(`Selamat! Pemain ${color.toUpperCase()} MENANG BESAR!`);
+                finishMove(color,index);
                 return;
             }
-
-            operGiliran();
         }
 
-        function efekMakanMengebom(myColor, myPos) {
-            if(typeof myPos === 'string') return; 
+        positions[color][index]=next;
+    }
 
-            players.forEach(enemyColor => {
-                if(enemyColor === myColor) return;
-                positions[enemyColor].forEach((enemyPos, idx) => {
-                    if (enemyPos === myPos) {
-                        positions[enemyColor][idx] = 'H'; 
-                        alert(`BOOM! Warna ${myColor.toUpperCase()} menendang Bidak ${enemyColor.toUpperCase()} kembali ke rumah!`);
-                    }
-                });
-            });
-        }
+    finishMove(color,index);
+}
 
-        function operGiliran() {
-            turnIndex = (turnIndex + 1) % 4;
-            updateUI();
-        }
+function finishMove(color,index){
 
-        // --- PEERJS MULTIPLAYER LOGIC ---
-        let peer;
-        let conn;
+    eatEnemy(color,positions[color][index]);
 
-        function initPeer() {
-            let randomId = 'ludo-' + Math.floor(1000 + Math.random() * 9000);
-            peer = new Peer(randomId);
+    const win = positions[color].every(p=>p==='F');
 
-            peer.on('open', (id) => {
-                document.getElementById('my-id').value = id;
-                document.getElementById('peer-status').innerText = "Siap bermain offline / bagikan ID untuk online.";
-            });
+    currentRoll = 0;
 
-            peer.on('connection', (connection) => {
-                conn = connection;
-                setupConnectionObject();
-                myColor = 'red'; 
-                isOnline = true;
-                alert("Pemain kedua masuk! Anda: RED, Teman: GREEN.");
-            });
-        }
+    document.getElementById('dice').innerText='-';
 
-        function connectToPeer() {
-            let targetId = document.getElementById('room-id').value;
-            if(!targetId) return alert("Masukkan ID tujuan terlebih dahulu!");
+    if(win){
 
-            conn = peer.connect(targetId);
-            setupConnectionObject();
-            myColor = 'green'; 
-            isOnline = true;
-            alert("Terhubung ke Host! Anda bermain sebagai warna GREEN.");
-        }
+        setTimeout(()=>{
+            alert(`${color.toUpperCase()} MENANG! 🏆`);
+        },200);
 
-        function setupConnectionObject() {
-            document.getElementById('peer-status').innerText = "Terhubung Online! 🎮";
-            
-            conn.on('data', (data) => {
-                if (data.type === 'ROLL') {
-                    document.getElementById('dice-view').innerText = data.roll;
-                    currentRoll = data.roll;
-                }
-                if (data.type === 'MOVE') {
-                    positions = data.positions;
-                    currentRoll = 0;
-                    operGiliran();
-                }
-            });
-        }
+        return;
+    }
 
-        function kirimDataRealtime(obj) {
-            if (isOnline && conn && conn.open) {
-                conn.send(obj);
+    nextTurn();
+
+    sendData({
+        type:'SYNC',
+        positions,
+        turnIndex
+    });
+
+    render();
+}
+
+function eatEnemy(myColor,myPos){
+
+    if(typeof myPos !== 'number') return;
+
+    if(safeSpots.includes(myPos)) return;
+
+    players.forEach(color=>{
+
+        if(color===myColor) return;
+
+        positions[color].forEach((p,i)=>{
+
+            if(p===myPos){
+
+                positions[color][i]='H';
+
+                document.getElementById('killSound').play();
+
+                setTimeout(()=>{
+                    alert(`${myColor.toUpperCase()} memakan ${color.toUpperCase()}! 💥`);
+                },100);
+
             }
+
+        });
+
+    });
+
+}
+
+function nextTurn(){
+
+    turnIndex++;
+
+    if(turnIndex>=players.length){
+        turnIndex=0;
+    }
+}
+
+/* =========================
+DICE
+========================= */
+
+function rollDice(){
+
+    const dice = document.getElementById('dice');
+
+    const btn = document.getElementById('rollBtn');
+
+    btn.disabled=true;
+
+    dice.classList.add('shake');
+
+    document.getElementById('diceSound').play();
+
+    let interval = setInterval(()=>{
+
+        dice.innerText=
+        Math.floor(Math.random()*6)+1;
+
+    },80);
+
+    setTimeout(()=>{
+
+        clearInterval(interval);
+
+        currentRoll=
+        Math.floor(Math.random()*6)+1;
+
+        dice.innerText=currentRoll;
+
+        dice.classList.remove('shake');
+
+        const color = players[turnIndex];
+
+        const available =
+        positions[color].some(p=>
+            canMove(color,p,currentRoll)
+        );
+
+        if(!available){
+
+            setTimeout(()=>{
+
+                currentRoll=0;
+
+                dice.innerText='-';
+
+                nextTurn();
+
+                render();
+
+            },1000);
+
+        }else{
+
+            render();
         }
 
-        function salinID() {
-            let copyText = document.getElementById("my-id");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(copyText.value);
-            alert("ID berhasil disalin!");
+        sendData({
+            type:'ROLL',
+            roll:currentRoll
+        });
+
+    },700);
+}
+
+/* =========================
+MULTIPLAYER
+========================= */
+
+let peer;
+let conn;
+
+function initPeer(){
+
+    peer = new Peer(
+        'ludo-'+Math.floor(Math.random()*99999)
+    );
+
+    peer.on('open',id=>{
+
+        document.getElementById('myId').value=id;
+
+        document.getElementById('peerStatus').innerHTML=
+        'Online siap • Bagikan ID untuk bermain';
+
+    });
+
+    peer.on('connection',connection=>{
+
+        conn = connection;
+
+        online=true;
+
+        setupConnection();
+
+        alert('Pemain masuk!');
+    });
+
+}
+
+function joinRoom(){
+
+    const id =
+    document.getElementById('joinId').value;
+
+    if(!id){
+
+        alert('Masukkan ID teman');
+
+        return;
+    }
+
+    conn = peer.connect(id);
+
+    online=true;
+
+    setupConnection();
+
+}
+
+function setupConnection(){
+
+    document.getElementById('peerStatus').innerHTML=
+    'Terhubung Online 🎮';
+
+    conn.on('data',data=>{
+
+        if(data.type==='ROLL'){
+
+            currentRoll=data.roll;
+
+            document.getElementById('dice').innerText=
+            data.roll;
+
+            render();
         }
 
-        initPeer();
-        updateUI();
-    </script>
+        if(data.type==='SYNC'){
+
+            positions=data.positions;
+
+            turnIndex=data.turnIndex;
+
+            currentRoll=0;
+
+            render();
+        }
+
+    });
+
+}
+
+function sendData(data){
+
+    if(online && conn && conn.open){
+
+        conn.send(data);
+    }
+}
+
+function copyId(){
+
+    const input =
+    document.getElementById('myId');
+
+    navigator.clipboard.writeText(input.value);
+
+    alert('ID disalin!');
+}
+
+/* =========================
+START
+========================= */
+
+initPeer();
+render();
+
+</script>
+
 </body>
 </html>
