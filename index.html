@@ -203,36 +203,6 @@ PANELS
 }
 
 /* =========================
-TURN
-========================= */
-
-.turn{
-    width:100%;
-    max-width:440px;
-
-    padding:14px 18px;
-
-    border-radius:999px;
-
-    background:
-    linear-gradient(180deg,
-    rgba(255,255,255,.12),
-    rgba(255,255,255,.06));
-
-    backdrop-filter:blur(12px);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    margin-bottom:18px;
-
-    text-align:center;
-
-    font-weight:800;
-
-    box-shadow:var(--shadow);
-}
-
-/* =========================
 BOARD
 ========================= */
 
@@ -485,43 +455,6 @@ PAWN
     }
 }
 
-/* =========================
-BOTTOM
-========================= */
-
-.bottom{
-    margin-top:20px;
-
-    display:flex;
-    align-items:center;
-
-    gap:18px;
-}
-
-.dice{
-    width:82px;
-    height:82px;
-
-    border-radius:24px;
-
-    background:
-    linear-gradient(145deg,#ffffff,#e2e8f0);
-
-    color:#111827;
-
-    font-size:40px;
-    font-weight:900;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border:4px solid rgba(255,255,255,.5);
-
-    box-shadow:
-    0 10px 20px rgba(0,0,0,.25);
-}
-
 .shake{
     animation:shake .08s infinite;
 }
@@ -530,29 +463,6 @@ BOTTOM
     0%{transform:rotate(2deg)}
     50%{transform:rotate(-2deg)}
     100%{transform:rotate(2deg)}
-}
-
-.roll{
-    border:none;
-
-    cursor:pointer;
-
-    padding:18px 32px;
-
-    border-radius:999px;
-
-    color:white;
-
-    font-size:16px;
-    font-weight:800;
-
-    background:
-    linear-gradient(180deg,#4ade80,#16a34a);
-
-    transition:.18s;
-
-    box-shadow:
-    0 10px 20px rgba(0,0,0,.25);
 }
 
 .roll:hover{
@@ -592,6 +502,134 @@ RESPONSIVE
     .roll{
         padding:15px 24px;
         font-size:14px;
+    }
+}
+
+/* =========================
+DICE PER PLAYER
+========================= */
+
+.dice-zone{
+    position:absolute;
+    z-index:50;
+}
+
+.red-zone{
+    top:20px;
+    left:20px;
+}
+
+.green-zone{
+    top:20px;
+    right:20px;
+}
+
+.yellow-zone{
+    bottom:20px;
+    right:20px;
+}
+
+.blue-zone{
+    bottom:20px;
+    left:20px;
+}
+
+.player-dice{
+    width:58px;
+    height:58px;
+
+    border-radius:20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    border:3px solid rgba(255,255,255,.5);
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.2);
+}
+
+.player-dice:hover{
+    transform:translateY(-3px) scale(1.05);
+}
+
+.player-dice:active{
+    transform:scale(.92);
+}
+
+.player-dice.red{
+    background:linear-gradient(145deg,#ff6b81,#ff1744);
+}
+
+.player-dice.green{
+    background:linear-gradient(145deg,#69f0ae,#00c853);
+}
+
+.player-dice.yellow{
+    background:linear-gradient(145deg,#ffe57f,#ffb300);
+}
+
+.player-dice.blue{
+    background:linear-gradient(145deg,#82b1ff,#2962ff);
+}
+
+.dice-face{
+    font-size:26px;
+    font-weight:900;
+    color:white;
+}
+
+.dice-rolling{
+    animation:diceRoll .12s linear infinite;
+}
+
+@keyframes diceRoll{
+
+    0%{
+        transform:rotate(0deg) scale(1);
+    }
+
+    25%{
+        transform:rotate(10deg) scale(1.1);
+    }
+
+    50%{
+        transform:rotate(-10deg) scale(.95);
+    }
+
+    100%{
+        transform:rotate(0deg) scale(1);
+    }
+}
+
+/* =========================
+AUTO MOVE EFFECT
+========================= */
+
+.pawn.moving{
+    animation:jump .25s ease;
+}
+
+@keyframes jump{
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-8px) scale(1.1);
+    }
+
+    100%{
+        transform:translateY(0);
     }
 }
 
@@ -673,16 +711,32 @@ RESPONSIVE
 
 </div>
 
-<div class="bottom">
+<!-- =========================
+DICE AREA PER WARNA
+========================= -->
 
-    <div class="dice" id="dice">
-        -
+<div class="dice-zone red-zone">
+    <div class="player-dice red" onclick="rollDice('red')">
+        <div class="dice-face" id="dice-red">🎲</div>
     </div>
+</div>
 
-    <button class="roll" id="rollBtn" onclick="rollDice()">
-        Kocok Dadu
-    </button>
+<div class="dice-zone green-zone">
+    <div class="player-dice green" onclick="rollDice('green')">
+        <div class="dice-face" id="dice-green">🎲</div>
+    </div>
+</div>
 
+<div class="dice-zone yellow-zone">
+    <div class="player-dice yellow" onclick="rollDice('yellow')">
+        <div class="dice-face" id="dice-yellow">🎲</div>
+    </div>
+</div>
+
+<div class="dice-zone blue-zone">
+    <div class="player-dice blue" onclick="rollDice('blue')">
+        <div class="dice-face" id="dice-blue">🎲</div>
+    </div>
 </div>
 
 <audio id="diceSound" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
@@ -723,6 +777,7 @@ const players = ["red","green","yellow","blue"];
 
 let turnIndex = 0;
 let currentRoll = 0;
+let rolling = false;
 
 let online = false;
 
@@ -852,15 +907,32 @@ function render(){
     });
 
     const active = players[turnIndex];
+    document
+.querySelectorAll('.player-dice')
+.forEach(el=>{
 
-    document.getElementById('turnInfo').innerHTML=
-    `Giliran :
-    <span style="color:var(--${active})">
-    ${active.toUpperCase()}
-    </span>`;
+    el.style.opacity='.35';
+    el.style.transform='scale(.9)';
+});
 
-    document.getElementById('rollBtn').disabled=
-    currentRoll !== 0;
+const active =
+players[turnIndex];
+
+const activeDice =
+document.querySelector(
+`.player-dice.${active}`
+);
+
+if(activeDice){
+
+    activeDice.style.opacity='1';
+
+    activeDice.style.transform=
+    'scale(1.1)';
+
+    activeDice.style.boxShadow=
+    '0 0 25px rgba(255,255,255,.6)';
+}
 }
 
 /* =========================
@@ -884,8 +956,6 @@ ANIMATION MOVE
 
 async function animateMove(color,index){
 
-    document.getElementById('rollBtn').disabled=true;
-
     let pos = positions[color][index];
 
     if(pos === 'H'){
@@ -895,44 +965,82 @@ async function animateMove(color,index){
 
         render();
 
-        await delay(250);
+        await delay(350);
 
     }else{
 
-        for(let step=0; step<currentRoll; step++){
+        for(
+            let step=0;
+            step<currentRoll;
+            step++
+        ){
 
-            document.getElementById('moveSound').play();
+            document
+            .getElementById('moveSound')
+            .play();
 
-            if(typeof positions[color][index] === 'number'){
+            if(
+                typeof positions[color][index]
+                === 'number'
+            ){
 
                 positions[color][index] =
-                (positions[color][index]+1)%52;
-
+                (
+                    positions[color][index]+1
+                ) % 52;
             }
 
             render();
 
-            await delay(240);
+            const pawns =
+            document.querySelectorAll(
+            `.pawn.${color}`
+            );
+
+            pawns.forEach(p=>{
+                p.classList.add('moving');
+            });
+
+            await delay(260);
         }
     }
 
-    eatEnemy(color,positions[color][index]);
+    eatEnemy(
+        color,
+        positions[color][index]
+    );
 
     const winner =
-    positions[color].every(p=>p==='F');
-
-    currentRoll=0;
-
-    document.getElementById('dice').innerText='-';
+    positions[color]
+    .every(p=>p==='F');
 
     if(winner){
 
         setTimeout(()=>{
-            alert(`${color.toUpperCase()} MENANG 🏆`);
+
+            alert(
+            `${color.toUpperCase()} MENANG 🏆`
+            );
+
         },200);
 
         return;
     }
+
+    /* =========================
+    JIKA DAPAT 6 MAIN LAGI
+    ========================= */
+
+    if(currentRoll === 6){
+
+        currentRoll = 0;
+
+        render();
+
+        return;
+    }
+
+    currentRoll = 0;
 
     nextTurn();
 
@@ -992,41 +1100,72 @@ function nextTurn(){
 ROLL
 ========================= */
 
-function rollDice(){
+async function rollDice(color){
+
+    if(rolling) return;
+
+    if(color !== players[turnIndex]) return;
+
+    rolling = true;
 
     const dice =
-    document.getElementById('dice');
+    document.getElementById(`dice-${color}`);
 
-    const btn =
-    document.getElementById('rollBtn');
-
-    btn.disabled=true;
-
-    dice.classList.add('shake');
+    dice.classList.add('dice-rolling');
 
     document.getElementById('diceSound').play();
 
-    let interval=setInterval(()=>{
+    const randomDice = ['⚀','⚁','⚂','⚃','⚄','⚅'];
 
-        dice.innerText=
-        Math.floor(Math.random()*6)+1;
+    let interval = setInterval(()=>{
 
-    },80);
+        dice.innerText =
+        randomDice[
+        Math.floor(Math.random()*6)
+        ];
 
-    setTimeout(()=>{
+    },90);
 
-        clearInterval(interval);
+    await delay(1200);
 
-        currentRoll=
-        Math.floor(Math.random()*6)+1;
+    clearInterval(interval);
 
-        dice.innerText=currentRoll;
+    currentRoll =
+    Math.floor(Math.random()*6)+1;
 
-        dice.classList.remove('shake');
+    dice.classList.remove('dice-rolling');
 
-        render();
+    dice.innerText =
+    randomDice[currentRoll-1];
 
-    },700);
+    render();
+
+    const activeColor =
+    players[turnIndex];
+
+    const movable = [];
+
+    positions[activeColor]
+    .forEach((pos,i)=>{
+
+        if(canMove(activeColor,pos,currentRoll)){
+
+            movable.push(i);
+        }
+
+    });
+
+    if(movable.length === 1){
+
+        await delay(500);
+
+        animateMove(
+            activeColor,
+            movable[0]
+        );
+    }
+
+    rolling = false;
 }
 
 /* =========================
