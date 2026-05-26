@@ -208,11 +208,16 @@ BOARD
 
 .board-wrap{
     position:relative;
+    width:min(94vw,460px);
+    height:min(94vw,460px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 #board{
-    width:min(94vw,460px);
-    height:min(94vw,460px);
+    width:100%;
+    height:100%;
 
     display:grid;
 
@@ -542,6 +547,15 @@ RESPONSIVE
 ========================= */
 
 @media(max-width:480px){
+    .player-dice{
+        width:44px;
+        height:44px;
+        border-radius:16px;
+    }
+
+    .dice-face{
+        font-size:22px;
+    }
 
     .logo{
         font-size:28px;
@@ -570,33 +584,37 @@ DICE PER PLAYER
 
 .dice-zone{
     position:absolute;
-    z-index:50;
-}
-
-.red-zone{
-    top:20px;
-    left:20px;
-}
-
-.green-zone{
-    top:20px;
-    right:20px;
-}
-
-.yellow-zone{
-    bottom:20px;
-    right:20px;
-}
-
-.blue-zone{
-    bottom:20px;
-    left:20px;
+    z-index:60;
+    pointer-events:none;
 }
 
 .player-dice{
+    pointer-events:auto;
+}
 
-    width:62px;
-    height:62px;
+.red-zone{
+    top:7%;
+    left:7%;
+}
+
+.green-zone{
+    top:7%;
+    right:7%;
+}
+
+.yellow-zone{
+    bottom:7%;
+    right:7%;
+}
+
+.blue-zone{
+    bottom:7%;
+    left:7%;
+}
+
+.player-dice{
+    width:52px;
+    height:52px;
 
     border-radius:20px;
 
@@ -797,12 +815,6 @@ AUTO MOVE EFFECT
     <div class="tri tr-blue"></div>
 </div>
 
-</div>
-
-<!-- =========================
-DICE AREA PER WARNA
-========================= -->
-
 <div class="dice-zone red-zone">
     <div class="player-dice red" onclick="rollDice('red')">
         <div class="dice-face" id="dice-red">🎲</div>
@@ -827,6 +839,7 @@ DICE AREA PER WARNA
     </div>
 </div>
 
+</div>
 <audio id="diceSound" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
 <audio id="moveSound" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
 <audio id="killSound" src="https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3"></audio>
