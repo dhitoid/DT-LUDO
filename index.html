@@ -410,16 +410,75 @@ PAWN
 
     position:absolute;
 
-    z-index:12;
+    z-index:20;
 
     transition:
-    left .18s linear,
-    top .18s linear,
-    transform .15s;
+    transform .18s ease,
+    filter .2s ease;
 
     box-shadow:
     inset 0 3px 4px rgba(255,255,255,.8),
     0 5px 12px rgba(0,0,0,.35);
+
+    transform-origin:center;
+
+    will-change:transform,left,top;
+
+    backface-visibility:hidden;
+}
+
+.pawn.walking{
+
+    animation:
+    pawnJump .23s ease;
+}
+
+@keyframes pawnJump{
+
+    0%{
+        transform:
+        translateY(0)
+        scale(1);
+    }
+
+    50%{
+        transform:
+        translateY(-10px)
+        scale(1.18);
+    }
+
+    100%{
+        transform:
+        translateY(0)
+        scale(1);
+    }
+}
+
+/* GLOW SAAT AKTIF */
+
+.pawn.active{
+
+    animation:
+    activeGlow .8s infinite alternate;
+}
+
+@keyframes activeGlow{
+
+    from{
+
+        transform:scale(1);
+
+        filter:
+        drop-shadow(0 0 0px gold);
+    }
+
+    to{
+
+        transform:scale(1.18);
+
+        filter:
+        drop-shadow(0 0 12px gold);
+    }
 }
 
 .pawn.red{
@@ -535,8 +594,9 @@ DICE PER PLAYER
 }
 
 .player-dice{
-    width:58px;
-    height:58px;
+
+    width:62px;
+    height:62px;
 
     border-radius:20px;
 
@@ -552,9 +612,12 @@ DICE PER PLAYER
 
     backdrop-filter:blur(10px);
 
+    transform-style:preserve-3d;
+
     box-shadow:
-    0 8px 20px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(255,255,255,.2);
+    inset 0 4px 10px rgba(255,255,255,.3),
+    inset 0 -8px 12px rgba(0,0,0,.25),
+    0 12px 25px rgba(0,0,0,.4);
 }
 
 .player-dice:hover{
@@ -594,19 +657,38 @@ DICE PER PLAYER
 @keyframes diceRoll{
 
     0%{
-        transform:rotate(0deg) scale(1);
+        transform:
+        rotateX(0deg)
+        rotateY(0deg)
+        scale(1);
     }
 
     25%{
-        transform:rotate(10deg) scale(1.1);
+        transform:
+        rotateX(180deg)
+        rotateY(90deg)
+        scale(1.15);
     }
 
     50%{
-        transform:rotate(-10deg) scale(.95);
+        transform:
+        rotateX(360deg)
+        rotateY(180deg)
+        scale(.95);
+    }
+
+    75%{
+        transform:
+        rotateX(540deg)
+        rotateY(270deg)
+        scale(1.12);
     }
 
     100%{
-        transform:rotate(0deg) scale(1);
+        transform:
+        rotateX(720deg)
+        rotateY(360deg)
+        scale(1);
     }
 }
 
@@ -631,6 +713,16 @@ AUTO MOVE EFFECT
     100%{
         transform:translateY(0);
     }
+}
+
+.cell{
+    position:relative;
+    overflow:visible;
+}
+
+.pawn{
+    position:absolute;
+    z-index:20;
 }
 
 </style>
@@ -664,10 +756,6 @@ AUTO MOVE EFFECT
         Menghubungkan P2P...
     </div>
 
-</div>
-
-<div class="turn" id="turnInfo">
-    Memuat permainan...
 </div>
 
 <div class="board-wrap">
@@ -864,16 +952,6 @@ function render(){
                 `${color}-home-${index}`
                 );
 
-            }else if(String(pos).startsWith('HOME')){
-
-                const idx =
-                Number(pos.split('-')[1]);
-
-                cell =
-                document.getElementById(
-                `c-${homeTracks[color][idx]}`
-                );
-
             }else{
 
                 cell =
@@ -897,7 +975,14 @@ function render(){
                     pawn.classList.add('active');
 
                     pawn.onclick=()=>{
-                        animateMove(color,index);
+
+                        if(!rolling){
+
+                            rolling=true;
+
+                            animateMove(color,index);
+
+                        }
                     };
                 }
             }
@@ -906,33 +991,38 @@ function render(){
 
     });
 
-    const active = players[turnIndex];
+    /* ACTIVE DICE UI */
+
     document
-.querySelectorAll('.player-dice')
-.forEach(el=>{
+    .querySelectorAll('.player-dice')
+    .forEach(el=>{
 
-    el.style.opacity='.35';
-    el.style.transform='scale(.9)';
-});
+        el.style.opacity='.35';
 
-const active =
-players[turnIndex];
+        el.style.transform='scale(.9)';
 
-const activeDice =
-document.querySelector(
-`.player-dice.${active}`
-);
+        el.style.boxShadow=
+        '0 8px 20px rgba(0,0,0,.35)';
+    });
 
-if(activeDice){
+    const activePlayer =
+    players[turnIndex];
 
-    activeDice.style.opacity='1';
+    const activeDice =
+    document.querySelector(
+    `.player-dice.${activePlayer}`
+    );
 
-    activeDice.style.transform=
-    'scale(1.1)';
+    if(activeDice){
 
-    activeDice.style.boxShadow=
-    '0 0 25px rgba(255,255,255,.6)';
-}
+        activeDice.style.opacity='1';
+
+        activeDice.style.transform=
+        'scale(1.1)';
+
+        activeDice.style.boxShadow=
+        '0 0 25px rgba(255,255,255,.7)';
+    }
 }
 
 /* =========================
@@ -953,7 +1043,6 @@ function canMove(color,pos,roll){
 /* =========================
 ANIMATION MOVE
 ========================= */
-
 async function animateMove(color,index){
 
     let pos = positions[color][index];
@@ -963,9 +1052,23 @@ async function animateMove(color,index){
         positions[color][index] =
         startIndexes[color];
 
-        render();
+render();
 
-        await delay(350);
+const pawns =
+document.querySelectorAll(
+`.pawn.${color}`
+);
+
+pawns.forEach(p=>{
+
+    p.classList.remove('walking');
+
+    void p.offsetWidth;
+
+    p.classList.add('walking');
+});
+
+await delay(180);
 
     }else{
 
@@ -977,31 +1080,20 @@ async function animateMove(color,index){
 
             document
             .getElementById('moveSound')
+            .currentTime = 0;
+
+            document
+            .getElementById('moveSound')
             .play();
 
-            if(
-                typeof positions[color][index]
-                === 'number'
-            ){
-
-                positions[color][index] =
-                (
-                    positions[color][index]+1
-                ) % 52;
-            }
+            positions[color][index] =
+            (
+                positions[color][index]+1
+            ) % 52;
 
             render();
 
-            const pawns =
-            document.querySelectorAll(
-            `.pawn.${color}`
-            );
-
-            pawns.forEach(p=>{
-                p.classList.add('moving');
-            });
-
-            await delay(260);
+            await delay(250);
         }
     }
 
@@ -1027,13 +1119,13 @@ async function animateMove(color,index){
         return;
     }
 
-    /* =========================
-    JIKA DAPAT 6 MAIN LAGI
-    ========================= */
+    /* DAPAT 6 MAIN LAGI */
 
     if(currentRoll === 6){
 
         currentRoll = 0;
+
+        rolling = false;
 
         render();
 
@@ -1045,6 +1137,8 @@ async function animateMove(color,index){
     nextTurn();
 
     render();
+
+    rolling = false;
 }
 
 /* =========================
@@ -1111,11 +1205,15 @@ async function rollDice(color){
     const dice =
     document.getElementById(`dice-${color}`);
 
-    dice.classList.add('dice-rolling');
+    const diceBox =
+    dice.parentElement;
+
+    diceBox.classList.add('dice-rolling');
 
     document.getElementById('diceSound').play();
 
-    const randomDice = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+    const randomDice =
+    ['⚀','⚁','⚂','⚃','⚄','⚅'];
 
     let interval = setInterval(()=>{
 
@@ -1126,17 +1224,18 @@ async function rollDice(color){
 
     },90);
 
-    await delay(1200);
+   await delay(1400);
 
     clearInterval(interval);
+    navigator.vibrate?.(70);
 
     currentRoll =
     Math.floor(Math.random()*6)+1;
 
-    dice.classList.remove('dice-rolling');
-
     dice.innerText =
     randomDice[currentRoll-1];
+
+    diceBox.classList.remove('dice-rolling');
 
     render();
 
@@ -1148,21 +1247,49 @@ async function rollDice(color){
     positions[activeColor]
     .forEach((pos,i)=>{
 
-        if(canMove(activeColor,pos,currentRoll)){
-
+        if(
+            canMove(
+                activeColor,
+                pos,
+                currentRoll
+            )
+        ){
             movable.push(i);
         }
 
     });
 
+    /* TIDAK ADA YANG BISA JALAN */
+
+    if(movable.length === 0){
+
+        await delay(700);
+
+        currentRoll = 0;
+
+        nextTurn();
+
+        render();
+
+        rolling = false;
+
+        return;
+    }
+
+    /* AUTO MOVE */
+
     if(movable.length === 1){
 
         await delay(500);
 
-        animateMove(
+        await animateMove(
             activeColor,
             movable[0]
         );
+
+        rolling = false;
+
+        return;
     }
 
     rolling = false;
