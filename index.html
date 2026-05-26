@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-<title>Ludo King Ultimate</title>
+<title>Ludo King Modern</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap" rel="stylesheet"/>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
 <style>
 
 :root{
-    --red:#ff3b30;
-    --green:#34c759;
-    --yellow:#ffcc00;
-    --blue:#007aff;
+    --red:#ff4d67;
+    --green:#34d67b;
+    --yellow:#ffc93d;
+    --blue:#4b7bff;
 
-    --bg:#2d1708;
-    --wood1:#6d4427;
-    --wood2:#4a2c17;
+    --bg:#0f172a;
+    --card:#111827;
+    --glass:rgba(255,255,255,.08);
 
-    --shadow:0 10px 25px rgba(0,0,0,.35);
+    --shadow:
+    0 10px 30px rgba(0,0,0,.35);
 }
 
 *{
@@ -34,23 +35,32 @@
 
 body{
     font-family:'Poppins',sans-serif;
-    background:
-    radial-gradient(circle at top,#784421 0%,#381d0c 60%,#1d0d04 100%);
     min-height:100vh;
+
+    background:
+    radial-gradient(circle at top,#243b6b 0%,#111827 45%,#090d16 100%);
+
+    color:white;
+
     display:flex;
     flex-direction:column;
     align-items:center;
-    color:white;
+
     overflow-x:hidden;
-    padding:14px;
+
+    padding:16px;
 }
 
 body::before{
     content:'';
     position:fixed;
     inset:0;
-    background:url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-    opacity:.18;
+
+    background:
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,.08),transparent 30%),
+    radial-gradient(circle at 80% 10%,rgba(255,255,255,.06),transparent 20%),
+    radial-gradient(circle at 50% 100%,rgba(255,255,255,.04),transparent 30%);
+
     pointer-events:none;
 }
 
@@ -61,42 +71,48 @@ HEADER
 .logo{
     font-size:34px;
     font-weight:900;
-    margin-top:6px;
     letter-spacing:.5px;
-    color:#ffe082;
+
+    background:linear-gradient(90deg,#fff,#ffe082);
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-top:6px;
 
     text-shadow:
-    0 2px 0 #ff9800,
-    0 5px 0 #e65100,
-    0 10px 18px rgba(0,0,0,.5);
+    0 5px 20px rgba(255,255,255,.15);
 }
 
 .sub{
-    opacity:.9;
-    margin-bottom:14px;
+    margin-top:2px;
     font-size:13px;
+    opacity:.7;
+    margin-bottom:18px;
 }
 
 /* =========================
-TOP PANEL
+PANELS
 ========================= */
 
 .panel{
     width:100%;
-    max-width:430px;
+    max-width:440px;
 
     background:
-    linear-gradient(180deg,#6b3d20,#3d2111);
+    linear-gradient(180deg,
+    rgba(255,255,255,.12),
+    rgba(255,255,255,.06));
+
+    backdrop-filter:blur(16px);
+
+    border:1px solid rgba(255,255,255,.12);
 
     border-radius:28px;
 
     padding:16px;
 
-    border:4px solid #ffcc80;
-
-    box-shadow:
-    0 8px 0 #2a170d,
-    0 18px 30px rgba(0,0,0,.4);
+    box-shadow:var(--shadow);
 
     margin-bottom:16px;
 }
@@ -115,27 +131,49 @@ TOP PANEL
 
 .input{
     flex:1;
-    height:48px;
+    height:50px;
+
     border:none;
-    border-radius:16px;
-    background:#111827;
-    color:white;
-    padding:0 14px;
     outline:none;
+
+    background:rgba(0,0,0,.25);
+
+    border-radius:18px;
+
+    color:white;
+
+    padding:0 16px;
+
     font-size:14px;
+
+    border:1px solid rgba(255,255,255,.08);
 }
 
 .input::placeholder{
-    color:#9ca3af;
+    color:#94a3b8;
 }
 
 .btn{
     border:none;
     cursor:pointer;
+
     color:white;
+
     font-weight:700;
-    border-radius:16px;
+
+    border-radius:18px;
+
     transition:.2s;
+
+    padding:0 18px;
+
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 5px 15px rgba(0,0,0,.2);
+}
+
+.btn:hover{
+    transform:translateY(-2px);
 }
 
 .btn:active{
@@ -143,20 +181,24 @@ TOP PANEL
 }
 
 .btn-copy{
-    width:100px;
-    background:linear-gradient(180deg,#4facfe,#007aff);
+    background:linear-gradient(180deg,#60a5fa,#2563eb);
 }
 
 .btn-join{
-    width:120px;
-    background:linear-gradient(180deg,#4cff84,#0bbd44);
+    background:linear-gradient(180deg,#4ade80,#16a34a);
 }
 
-.status-box{
+.status{
     margin-top:12px;
-    background:rgba(255,255,255,.08);
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.06);
+
     padding:12px;
-    border-radius:16px;
+
+    border-radius:18px;
+
     font-size:13px;
 }
 
@@ -164,134 +206,171 @@ TOP PANEL
 TURN
 ========================= */
 
-.turn-bar{
+.turn{
     width:100%;
-    max-width:430px;
-    padding:14px 20px;
-    margin-bottom:14px;
+    max-width:440px;
+
+    padding:14px 18px;
 
     border-radius:999px;
 
     background:
-    linear-gradient(180deg,#704225,#442515);
+    linear-gradient(180deg,
+    rgba(255,255,255,.12),
+    rgba(255,255,255,.06));
 
-    border:3px solid #ffcf88;
+    backdrop-filter:blur(12px);
 
-    box-shadow:
-    0 6px 0 #2c170d,
-    0 12px 22px rgba(0,0,0,.3);
+    border:1px solid rgba(255,255,255,.12);
+
+    margin-bottom:18px;
 
     text-align:center;
+
     font-weight:800;
-    font-size:16px;
+
+    box-shadow:var(--shadow);
 }
 
 /* =========================
 BOARD
 ========================= */
 
-.board-wrapper{
+.board-wrap{
     position:relative;
 }
 
 #board{
-    width:min(92vw,430px);
-    height:min(92vw,430px);
-
-    background:#fff5d6;
-
-    border-radius:30px;
-
-    overflow:hidden;
-
-    border:10px solid #8b5a2b;
-
-    box-shadow:
-    0 0 0 5px #c99555,
-    0 18px 30px rgba(0,0,0,.45);
+    width:min(94vw,460px);
+    height:min(94vw,460px);
 
     display:grid;
+
     grid-template-columns:repeat(15,1fr);
     grid-template-rows:repeat(15,1fr);
 
     position:relative;
+
+    background:#f8f5e9;
+
+    overflow:hidden;
+
+    border-radius:38px;
+
+    border:10px solid rgba(255,255,255,.15);
+
+    box-shadow:
+    0 20px 40px rgba(0,0,0,.4),
+    inset 0 0 30px rgba(255,255,255,.15);
 }
 
-/* =========================
-CELLS
-========================= */
-
 .cell{
-    border:1px solid rgba(0,0,0,.08);
+    border:1px solid rgba(0,0,0,.05);
+
     position:relative;
+
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
+
     background:#fffdf7;
 }
 
-.safe{
-    background:#fff7c2 !important;
+.cell::after{
+    content:'';
+    position:absolute;
+    inset:2px;
+    border-radius:6px;
 }
 
-.safe::after{
-    content:'★';
-    color:#f59e0b;
-    font-size:12px;
+.red-path{background:#ffd7de;}
+.green-path{background:#dafce7;}
+.yellow-path{background:#fff1bf;}
+.blue-path{background:#dce7ff;}
+
+.safe{
+    background:#fff7d4 !important;
+}
+
+.safe::before{
+    content:'✦';
+
     position:absolute;
+
+    font-size:11px;
+
+    color:#f59e0b;
+
+    animation:twinkle 1s infinite alternate;
+}
+
+@keyframes twinkle{
+    from{
+        opacity:.5;
+        transform:scale(1);
+    }
+    to{
+        opacity:1;
+        transform:scale(1.2);
+    }
 }
 
 /* =========================
-BASES
+BASE
 ========================= */
 
 .base{
     position:absolute;
+
     width:40%;
     height:40%;
-    padding:14px;
+
+    padding:16px;
+
     display:grid;
     grid-template-columns:repeat(2,1fr);
+
     gap:14px;
 }
 
 .base.red{
     top:0;
     left:0;
-    background:linear-gradient(145deg,#ff5d5d,#d60000);
+    background:linear-gradient(145deg,#ff6b7e,#ff1744);
 }
 
 .base.green{
     top:0;
     right:0;
-    background:linear-gradient(145deg,#62ff98,#00b34b);
+    background:linear-gradient(145deg,#5ef0a3,#00c853);
 }
 
 .base.yellow{
     bottom:0;
     right:0;
-    background:linear-gradient(145deg,#fff27a,#ffc400);
+    background:linear-gradient(145deg,#ffe27a,#ffc400);
 }
 
 .base.blue{
     bottom:0;
     left:0;
-    background:linear-gradient(145deg,#71b7ff,#005eff);
+    background:linear-gradient(145deg,#7aaeff,#2962ff);
 }
 
 .base-home{
     background:white;
-    border-radius:20px;
 
-    border:5px solid rgba(255,255,255,.8);
+    border-radius:22px;
+
+    border:5px solid rgba(255,255,255,.85);
 
     display:flex;
     align-items:center;
     justify-content:center;
 
     box-shadow:
-    inset 0 3px 8px rgba(0,0,0,.2),
-    0 6px 12px rgba(0,0,0,.25);
+    inset 0 3px 10px rgba(0,0,0,.2),
+    0 6px 15px rgba(0,0,0,.25);
 }
 
 /* =========================
@@ -300,14 +379,24 @@ CENTER
 
 .center{
     position:absolute;
-    width:28%;
-    height:28%;
+
+    width:29%;
+    height:29%;
+
     left:50%;
     top:50%;
+
     transform:translate(-50%,-50%) rotate(45deg);
+
     overflow:hidden;
+
+    border-radius:14px;
+
     border:5px solid white;
-    border-radius:10px;
+
+    box-shadow:
+    0 10px 20px rgba(0,0,0,.25);
+
     z-index:4;
 }
 
@@ -338,30 +427,29 @@ CENTER
 }
 
 /* =========================
-TRACK COLORS
-========================= */
-
-.red-path{background:#ffd4d4;}
-.green-path{background:#d7ffd7;}
-.yellow-path{background:#fff5b7;}
-.blue-path{background:#d7e9ff;}
-
-/* =========================
 PAWN
 ========================= */
 
 .pawn{
-    width:18px;
-    height:18px;
+    width:20px;
+    height:20px;
+
     border-radius:50%;
+
     border:2px solid white;
+
     position:absolute;
-    z-index:9;
+
+    z-index:12;
+
+    transition:
+    left .18s linear,
+    top .18s linear,
+    transform .15s;
+
     box-shadow:
     inset 0 3px 4px rgba(255,255,255,.8),
-    0 4px 10px rgba(0,0,0,.4);
-
-    transition:.25s;
+    0 5px 12px rgba(0,0,0,.35);
 }
 
 .pawn.red{
@@ -381,41 +469,45 @@ PAWN
 }
 
 .pawn.active{
-    animation:pulse .7s infinite alternate;
+    animation:activePawn .7s infinite alternate;
     cursor:pointer;
 }
 
-@keyframes pulse{
+@keyframes activePawn{
     from{
         transform:scale(1);
         filter:drop-shadow(0 0 0 gold);
     }
+
     to{
-        transform:scale(1.25);
+        transform:scale(1.3);
         filter:drop-shadow(0 0 10px gold);
     }
 }
 
 /* =========================
-BOTTOM CONTROLS
+BOTTOM
 ========================= */
 
 .bottom{
-    margin-top:18px;
+    margin-top:20px;
+
     display:flex;
     align-items:center;
+
     gap:18px;
 }
 
 .dice{
     width:82px;
     height:82px;
+
     border-radius:24px;
 
     background:
-    linear-gradient(145deg,#fff,#ffe2ba);
+    linear-gradient(145deg,#ffffff,#e2e8f0);
 
-    color:#5c3b16;
+    color:#111827;
 
     font-size:40px;
     font-weight:900;
@@ -424,11 +516,10 @@ BOTTOM CONTROLS
     align-items:center;
     justify-content:center;
 
-    border:5px solid white;
+    border:4px solid rgba(255,255,255,.5);
 
     box-shadow:
-    0 8px 0 #b59a87,
-    0 15px 20px rgba(0,0,0,.35);
+    0 10px 20px rgba(0,0,0,.25);
 }
 
 .shake{
@@ -441,42 +532,39 @@ BOTTOM CONTROLS
     100%{transform:rotate(2deg)}
 }
 
-.roll-btn{
+.roll{
     border:none;
-
-    border-radius:999px;
-
-    padding:18px 34px;
-
-    font-size:17px;
-    font-weight:800;
-
-    color:white;
 
     cursor:pointer;
 
+    padding:18px 32px;
+
+    border-radius:999px;
+
+    color:white;
+
+    font-size:16px;
+    font-weight:800;
+
     background:
-    linear-gradient(180deg,#6dff84,#00b843);
+    linear-gradient(180deg,#4ade80,#16a34a);
 
-    border:3px solid rgba(255,255,255,.7);
+    transition:.18s;
 
     box-shadow:
-    0 8px 0 #167532,
-    0 14px 20px rgba(0,0,0,.3);
-
-    transition:.15s;
+    0 10px 20px rgba(0,0,0,.25);
 }
 
-.roll-btn:active{
-    transform:translateY(4px);
-    box-shadow:
-    0 2px 0 #167532;
+.roll:hover{
+    transform:translateY(-2px);
 }
 
-.roll-btn:disabled{
+.roll:active{
+    transform:scale(.96);
+}
+
+.roll:disabled{
     opacity:.45;
-    transform:none;
-    box-shadow:none;
     cursor:not-allowed;
 }
 
@@ -487,23 +575,23 @@ RESPONSIVE
 @media(max-width:480px){
 
     .logo{
-        font-size:26px;
-    }
-
-    .dice{
-        width:68px;
-        height:68px;
-        font-size:30px;
-    }
-
-    .roll-btn{
-        padding:15px 24px;
-        font-size:15px;
+        font-size:28px;
     }
 
     .pawn{
-        width:14px;
-        height:14px;
+        width:15px;
+        height:15px;
+    }
+
+    .dice{
+        width:70px;
+        height:70px;
+        font-size:30px;
+    }
+
+    .roll{
+        padding:15px 24px;
+        font-size:14px;
     }
 }
 
@@ -512,7 +600,7 @@ RESPONSIVE
 <body>
 
 <div class="logo">Ludo King 🎲</div>
-<div class="sub">Ultimate Multiplayer Edition</div>
+<div class="sub">Modern Multiplayer Edition</div>
 
 <div class="panel">
 
@@ -522,50 +610,54 @@ RESPONSIVE
 
     <div class="row">
         <input class="input" type="text" id="myId" readonly placeholder="ID Kamu">
-        <button class="btn btn-copy" onclick="copyId()">Salin</button>
+        <button class="btn btn-copy" onclick="copyId()">
+            Salin
+        </button>
     </div>
 
     <div class="row">
         <input class="input" type="text" id="joinId" placeholder="Masukkan ID Teman">
-        <button class="btn btn-join" onclick="joinRoom()">Join</button>
+        <button class="btn btn-join" onclick="joinRoom()">
+            Join
+        </button>
     </div>
 
-    <div class="status-box" id="peerStatus">
+    <div class="status" id="peerStatus">
         Menghubungkan P2P...
     </div>
 
 </div>
 
-<div class="turn-bar" id="turnInfo">
-    Memuat papan...
+<div class="turn" id="turnInfo">
+    Memuat permainan...
 </div>
 
-<div class="board-wrapper">
+<div class="board-wrap">
 
 <div id="board"></div>
 
-<div class="base red" id="base-red">
+<div class="base red">
     <div class="base-home" id="red-home-0"></div>
     <div class="base-home" id="red-home-1"></div>
     <div class="base-home" id="red-home-2"></div>
     <div class="base-home" id="red-home-3"></div>
 </div>
 
-<div class="base green" id="base-green">
+<div class="base green">
     <div class="base-home" id="green-home-0"></div>
     <div class="base-home" id="green-home-1"></div>
     <div class="base-home" id="green-home-2"></div>
     <div class="base-home" id="green-home-3"></div>
 </div>
 
-<div class="base yellow" id="base-yellow">
+<div class="base yellow">
     <div class="base-home" id="yellow-home-0"></div>
     <div class="base-home" id="yellow-home-1"></div>
     <div class="base-home" id="yellow-home-2"></div>
     <div class="base-home" id="yellow-home-3"></div>
 </div>
 
-<div class="base blue" id="base-blue">
+<div class="base blue">
     <div class="base-home" id="blue-home-0"></div>
     <div class="base-home" id="blue-home-1"></div>
     <div class="base-home" id="blue-home-2"></div>
@@ -587,7 +679,7 @@ RESPONSIVE
         -
     </div>
 
-    <button class="roll-btn" id="rollBtn" onclick="rollDice()">
+    <button class="roll" id="rollBtn" onclick="rollDice()">
         Kocok Dadu
     </button>
 
@@ -632,7 +724,6 @@ const players = ["red","green","yellow","blue"];
 let turnIndex = 0;
 let currentRoll = 0;
 
-let myColor = "red";
 let online = false;
 
 let positions = {
@@ -642,27 +733,25 @@ let positions = {
     blue:['H','H','H','H']
 };
 
+const board = document.getElementById('board');
+
 /* =========================
-BOARD
+BUILD BOARD
 ========================= */
 
-const board = document.getElementById("board");
-
 function buildBoard(){
-
-    board.innerHTML='';
 
     for(let r=0;r<15;r++){
 
         for(let c=0;c<15;c++){
 
-            const cell = document.createElement('div');
+            const cell=document.createElement('div');
 
             cell.className='cell';
 
             cell.id=`c-${r}-${c}`;
 
-            const coord = `${r}-${c}`;
+            const coord=`${r}-${c}`;
 
             if(homeTracks.red.includes(coord)){
                 cell.classList.add('red-path');
@@ -684,9 +773,10 @@ function buildBoard(){
         }
     }
 
-    safeSpots.forEach(index=>{
-        const coord = mainTrack[index];
-        document.getElementById(`c-${coord}`)?.classList.add('safe');
+    safeSpots.forEach(i=>{
+        const coord = mainTrack[i];
+        document.getElementById(`c-${coord}`)
+        .classList.add('safe');
     });
 }
 
@@ -698,58 +788,63 @@ RENDER
 
 function render(){
 
-    document.querySelectorAll('.pawn').forEach(e=>e.remove());
+    document.querySelectorAll('.pawn').forEach(p=>p.remove());
 
     players.forEach(color=>{
 
-        positions[color].forEach((pos,i)=>{
+        positions[color].forEach((pos,index)=>{
 
-            let parent;
+            if(pos === 'F') return;
+
+            const pawn = document.createElement('div');
+
+            pawn.className=`pawn ${color}`;
+
+            let cell;
 
             if(pos === 'H'){
 
-                parent = document.getElementById(`${color}-home-${i}`);
-
-            }else if(pos === 'F'){
-
-                return;
+                cell =
+                document.getElementById(
+                `${color}-home-${index}`
+                );
 
             }else if(String(pos).startsWith('HOME')){
 
-                let idx = Number(pos.split('-')[1]);
+                const idx =
+                Number(pos.split('-')[1]);
 
-                const coord = homeTracks[color][idx];
-
-                parent = document.getElementById(`c-${coord}`);
+                cell =
+                document.getElementById(
+                `c-${homeTracks[color][idx]}`
+                );
 
             }else{
 
-                const coord = mainTrack[pos];
-
-                parent = document.getElementById(`c-${coord}`);
+                cell =
+                document.getElementById(
+                `c-${mainTrack[pos]}`
+                );
             }
 
-            if(parent){
+            if(cell){
 
-                const pawn = document.createElement('div');
-
-                pawn.className=`pawn ${color}`;
+                cell.appendChild(pawn);
 
                 if(
-                    color === players[turnIndex]
+                    color===players[turnIndex]
                     &&
-                    currentRoll > 0
+                    currentRoll>0
                     &&
                     canMove(color,pos,currentRoll)
                 ){
+
                     pawn.classList.add('active');
 
                     pawn.onclick=()=>{
-                        movePawn(color,i);
+                        animateMove(color,index);
                     };
                 }
-
-                parent.appendChild(pawn);
             }
 
         });
@@ -769,7 +864,7 @@ function render(){
 }
 
 /* =========================
-MOVE
+CAN MOVE
 ========================= */
 
 function canMove(color,pos,roll){
@@ -780,89 +875,60 @@ function canMove(color,pos,roll){
         return roll === 6;
     }
 
-    if(String(pos).startsWith('HOME')){
-
-        const idx = Number(pos.split('-')[1]);
-
-        return idx + roll <= 5;
-    }
-
     return true;
 }
 
-function movePawn(color,index){
+/* =========================
+ANIMATION MOVE
+========================= */
 
-    document.getElementById('moveSound').play();
+async function animateMove(color,index){
+
+    document.getElementById('rollBtn').disabled=true;
 
     let pos = positions[color][index];
 
     if(pos === 'H'){
 
-        positions[color][index]=startIndexes[color];
+        positions[color][index] =
+        startIndexes[color];
 
-    }else if(String(pos).startsWith('HOME')){
+        render();
 
-        const idx = Number(pos.split('-')[1]);
-
-        const next = idx + currentRoll;
-
-        if(next >= 5){
-
-            positions[color][index]='F';
-
-        }else{
-
-            positions[color][index]=`HOME-${next}`;
-        }
+        await delay(250);
 
     }else{
 
-        let next = pos;
+        for(let step=0; step<currentRoll; step++){
 
-        for(let i=0;i<currentRoll;i++){
+            document.getElementById('moveSound').play();
 
-            next=(next+1)%52;
+            if(typeof positions[color][index] === 'number'){
 
-            const end=(startIndexes[color]+50)%52;
+                positions[color][index] =
+                (positions[color][index]+1)%52;
 
-            if(next===end){
-
-                let remain=currentRoll-i-1;
-
-                if(remain>=5){
-
-                    positions[color][index]='F';
-
-                }else{
-
-                    positions[color][index]=`HOME-${remain}`;
-                }
-
-                finishMove(color,index);
-                return;
             }
+
+            render();
+
+            await delay(240);
         }
-
-        positions[color][index]=next;
     }
-
-    finishMove(color,index);
-}
-
-function finishMove(color,index){
 
     eatEnemy(color,positions[color][index]);
 
-    const win = positions[color].every(p=>p==='F');
+    const winner =
+    positions[color].every(p=>p==='F');
 
-    currentRoll = 0;
+    currentRoll=0;
 
     document.getElementById('dice').innerText='-';
 
-    if(win){
+    if(winner){
 
         setTimeout(()=>{
-            alert(`${color.toUpperCase()} MENANG! 🏆`);
+            alert(`${color.toUpperCase()} MENANG 🏆`);
         },200);
 
         return;
@@ -870,14 +936,12 @@ function finishMove(color,index){
 
     nextTurn();
 
-    sendData({
-        type:'SYNC',
-        positions,
-        turnIndex
-    });
-
     render();
 }
+
+/* =========================
+EAT
+========================= */
 
 function eatEnemy(myColor,myPos){
 
@@ -889,44 +953,52 @@ function eatEnemy(myColor,myPos){
 
         if(color===myColor) return;
 
-        positions[color].forEach((p,i)=>{
+        positions[color].forEach((pos,i)=>{
 
-            if(p===myPos){
+            if(pos===myPos){
 
                 positions[color][i]='H';
 
                 document.getElementById('killSound').play();
 
                 setTimeout(()=>{
-                    alert(`${myColor.toUpperCase()} memakan ${color.toUpperCase()}! 💥`);
+                    alert(
+                    `${myColor.toUpperCase()}
+                    memakan
+                    ${color.toUpperCase()} 💥`
+                    );
                 },100);
-
             }
 
         });
 
     });
-
 }
+
+/* =========================
+TURN
+========================= */
 
 function nextTurn(){
 
     turnIndex++;
 
-    if(turnIndex>=players.length){
+    if(turnIndex >= players.length){
         turnIndex=0;
     }
 }
 
 /* =========================
-DICE
+ROLL
 ========================= */
 
 function rollDice(){
 
-    const dice = document.getElementById('dice');
+    const dice =
+    document.getElementById('dice');
 
-    const btn = document.getElementById('rollBtn');
+    const btn =
+    document.getElementById('rollBtn');
 
     btn.disabled=true;
 
@@ -934,7 +1006,7 @@ function rollDice(){
 
     document.getElementById('diceSound').play();
 
-    let interval = setInterval(()=>{
+    let interval=setInterval(()=>{
 
         dice.innerText=
         Math.floor(Math.random()*6)+1;
@@ -952,38 +1024,20 @@ function rollDice(){
 
         dice.classList.remove('shake');
 
-        const color = players[turnIndex];
-
-        const available =
-        positions[color].some(p=>
-            canMove(color,p,currentRoll)
-        );
-
-        if(!available){
-
-            setTimeout(()=>{
-
-                currentRoll=0;
-
-                dice.innerText='-';
-
-                nextTurn();
-
-                render();
-
-            },1000);
-
-        }else{
-
-            render();
-        }
-
-        sendData({
-            type:'ROLL',
-            roll:currentRoll
-        });
+        render();
 
     },700);
+}
+
+/* =========================
+UTILS
+========================= */
+
+function delay(ms){
+
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms);
+    });
 }
 
 /* =========================
@@ -1004,21 +1058,18 @@ function initPeer(){
         document.getElementById('myId').value=id;
 
         document.getElementById('peerStatus').innerHTML=
-        'Online siap • Bagikan ID untuk bermain';
+        'Online siap • Bagikan ID';
 
     });
 
     peer.on('connection',connection=>{
 
-        conn = connection;
+        conn=connection;
 
         online=true;
 
         setupConnection();
-
-        alert('Pemain masuk!');
     });
-
 }
 
 function joinRoom(){
@@ -1033,52 +1084,17 @@ function joinRoom(){
         return;
     }
 
-    conn = peer.connect(id);
+    conn=peer.connect(id);
 
     online=true;
 
     setupConnection();
-
 }
 
 function setupConnection(){
 
     document.getElementById('peerStatus').innerHTML=
     'Terhubung Online 🎮';
-
-    conn.on('data',data=>{
-
-        if(data.type==='ROLL'){
-
-            currentRoll=data.roll;
-
-            document.getElementById('dice').innerText=
-            data.roll;
-
-            render();
-        }
-
-        if(data.type==='SYNC'){
-
-            positions=data.positions;
-
-            turnIndex=data.turnIndex;
-
-            currentRoll=0;
-
-            render();
-        }
-
-    });
-
-}
-
-function sendData(data){
-
-    if(online && conn && conn.open){
-
-        conn.send(data);
-    }
 }
 
 function copyId(){
@@ -1088,7 +1104,7 @@ function copyId(){
 
     navigator.clipboard.writeText(input.value);
 
-    alert('ID disalin!');
+    alert('ID berhasil disalin');
 }
 
 /* =========================
